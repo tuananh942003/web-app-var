@@ -3,7 +3,12 @@ import { Navbar } from "../../component/navbar.jsx";
 import logo from "../../images/computerscience-scaled.jpg";
 import { Footer } from "../../component/footer.jsx";
 import "@fortawesome/fontawesome-free/css/all.css";
-import "./home_page.css";
+import "./home-page.css";
+import { serviceData } from "../../data/serviceData.js";
+import ServiceCard from "./card.jsx";
+import { newsData } from "../../data/serviceData.js";
+import { NewsCard } from "./card.jsx";
+import { Contact } from "../../component/contact.jsx";
 export const HomePage = () => {
   return (
     <>
@@ -96,12 +101,44 @@ export const HomePage = () => {
           </div>
         </div>
       </div>
+      <section style={{ padding: "60px" }} id="about-section"></section>
       <div className="container-service">
         <div className="service-header">
           <h4>Dịch vụ của chúng tôi</h4>
           <p>Dịch vụ tư vấn đấu thầu chuyên nghiệp và toàn diện</p>
         </div>
       </div>
+      <div className="card-wrapper-service">
+        {serviceData.map((service) => {
+          return(<ServiceCard
+            key={service.id}
+            icon={service.icon}
+            title={service.title}
+            description={service.description}
+          />)
+          
+        })}
+      </div>
+      <section style={{ padding: "60px" }} id="about-section"></section>
+      <div className="container-news">
+        <div className="news-header">
+          <h5>Tin tức & Kiến thức</h5>
+          <p>Cập nhật luật đấu thầu và kinh nghiệm thực tế</p>
+        </div>
+        <div className="card-wrapper-news">
+          {newsData.map((news) => {
+            return(<NewsCard
+              key={news.id}
+              image={news.image}
+              title={news.title}
+              description={news.description}
+              extension={news.extension}
+            />)
+          })}
+        </div>
+      </div>
+      <section style={{ padding: "60px" }} id="about-section"></section>
+      <Contact />
       <Footer />
     </>
   );

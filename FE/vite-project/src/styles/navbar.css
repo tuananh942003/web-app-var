@@ -1,5 +1,5 @@
 .navbar {
-    position: fixed;
+    position: sticky;
     display: flex;
     justify-content: space-evenly;  
     padding: 10px 20px;
@@ -10,6 +10,7 @@
     width: 100%;
     box-sizing: border-box;
     height: 15%;
+    z-index: 1000;
 }
 
 .nav-logo img{
