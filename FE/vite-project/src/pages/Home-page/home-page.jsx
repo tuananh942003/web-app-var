@@ -9,10 +9,11 @@ import ServiceCard from "./card.jsx";
 import { newsData } from "../../data/serviceData.js";
 import { NewsCard } from "./card.jsx";
 import { Contact } from "../../component/contact.jsx";
+import { Link } from "react-router-dom";
 export const HomePage = () => {
   return (
     <>
-      <Navbar />
+      
       <div className="home-page">
         <div className="left-home-page">
           <h1>Chuyên gia tư vấn và hỗ trợ đấu thầu dự án</h1>
@@ -139,7 +140,8 @@ export const HomePage = () => {
       </div>
       <section style={{ padding: "60px" }} id="about-section"></section>
       <Contact />
-      <Footer />
+      
+    
     </>
   );
 };

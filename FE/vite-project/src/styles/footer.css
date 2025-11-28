@@ -1,0 +1,73 @@
+.footer-container {
+    background-color: rgb(15,23,42);
+    color: rgba(255, 255, 255,  0.87);
+    max-width: 100%;
+    padding: 20px 0;
+}
+.footer-content {
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    align-self: start;
+    margin: auto;
+    max-width: 1200px;
+    
+}
+.footer-section {
+    margin-bottom: 20px;
+}   
+.footer-section h3 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+.footer-section p, .footer-section a {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: rgba(255, 255, 255,  0.87);
+    text-decoration: none;
+}
+.footer-section a:hover {
+    color: #3b82f6;
+    transition: color 0.3s ease;
+}
+.footer-section h4 {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+.social-link {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.social-link i {
+    box-sizing: border-box;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.social-link i:hover {
+    color: #3b82f6;
+    transition: color 0.3s ease;
+}
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+.footer-bottom {
+    text-align: center;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: rgba(255, 255, 255,  0.87);
+}

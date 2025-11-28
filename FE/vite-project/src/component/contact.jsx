@@ -49,7 +49,28 @@ export const Contact = () => {
                 </div>
             </div>
             <div className='contact-form'>
-            dsadadadsadsadsada
+                <div className="contact-form-input">
+                    <input type="text" name='full_name' placeholder='Họ và tên'/>
+                </div>
+                <div className="contact-form-input">
+                    <input type="email" name='email' placeholder='Email'/>
+                </div>
+                <div className="contact-form-input">
+                    <input type="tel" name='phone' placeholder='Số điện thoại' />
+                </div>
+                <div className="contact-form-input">
+                    <input type="text" name='company' placeholder='Công Ty'/>
+                </div>
+                <div className="contact-form-input">
+                   <input type="text" name='subject' placeholder='Tiêu đề' />
+                </div>
+                <div className="contact-form-input">
+                    <textarea name="message" rows="5" placeholder='Nội dung'></textarea>
+                </div>
+                <button type='submit' className='btn-submit' >
+                    <i className="fas fa-paper-plane"></i>
+                    Gửi tin nhắn
+                </button>
         </div>
         </div>
         
