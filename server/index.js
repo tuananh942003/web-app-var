@@ -11,6 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 import User from './src/model/user.model.js';
+import Post from './src/model/posts.model.js';
+import Service from './src/model/service.model.js';
 
 // Define routes here
 app.post('/api/users', async (req, res) => {
@@ -44,8 +46,29 @@ app.post('/api/login', async (req, res) => {
 }); 
 app.post('/api/posts', async (req, res) => {
   // Logic to create a new post
-  res.status(201).json({ message: 'Post created' });
+  const { title, content, author } = req.body;
+  const newPost = new Post({ title, content });
+  await newPost.save();
+  res.status(201).json(newPost);
 });
+app.get('/api/posts', async (req, res) => {
+  // Logic to get all posts
+  const posts = await Post.find().sort({ createdAt: -1 });
+  res.status(200).json(posts);
+});
+app.post('/api/services', async (req, res) => {
+  // Logic to create a new service
+  const { icon, title, content, description } = req.body;
+  const newService = new Service({ icon, title, content, description });
+  await newService.save();
+  res.status(201).json(newService);
+});
+app.get('/api/services', async (req, res) => {
+  // Logic to get all services
+  const services = await Service.find();
+  res.status(200).json(services);
+});
+
 // Start the server
 connectDB();
 app.listen(PORT, () => {

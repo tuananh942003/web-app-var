@@ -10,6 +10,7 @@ import HomePage from "./pages/Home-page/home-page.jsx";
 import About from "./pages/About-page/about.jsx";
 import { Contact } from "./component/contact.jsx";
 import AdminPage from "./component/admin-page.jsx";
+import ServicePage from "./pages/Service-page/service-page.jsx";
 import { Route, Routes } from "react-router-dom";
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/service" element={<ServicePage />} />
               </Routes>
               <Footer />
             </>

@@ -47,7 +47,7 @@ export const HomePage = () => {
           <div className="about-text">
             <div className=" feature-item">
               <div className="icon">
-                <i class="fa-solid fa-clipboard-check"></i>
+                <i className="fa-solid fa-clipboard-check"></i>
               </div>
               <div className="info">
                 <h3 className="info-title">Tư vấn chuyên sâu</h3>
@@ -58,7 +58,7 @@ export const HomePage = () => {
             </div>
             <div className=" feature-item">
               <div className="icon">
-                <i class="fa-solid fa-gavel"></i>
+                <i className="fa-solid fa-gavel"></i>
               </div>
               <div className="info">
                 <h3 className="info-title">Kinh nghiệm đấu thầu</h3>
@@ -71,7 +71,7 @@ export const HomePage = () => {
 
             <div className=" feature-item">
               <div className="icon">
-                <i class="fa-solid fa-trophy"></i>
+                <i className="fa-solid fa-trophy"></i>
               </div>
               <div className="info">
                 <h3 className="info-title">Tỷ lệ trúng thầu cao</h3>
@@ -83,19 +83,19 @@ export const HomePage = () => {
             </div>
           </div>
           <div className="about-stat">
-            <div className="stat-card">
+            <div className="home-stat-card">
               <div className="stat-number">320</div>
               <div className="stat-label">Gói thầu đã trúng</div>
             </div>
-            <div className="stat-card">
+            <div className="home-stat-card">
               <div className="stat-number">1000</div>
               <div className="stat-label">Khách hàng tin tưởng</div>
             </div>
-            <div className="stat-card">
+            <div className="home-stat-card">
               <div className="stat-number">12</div>
               <div className="stat-label">Năm kinh nghiệm</div>
             </div>
-            <div className="stat-card">
+            <div className="home-stat-card">
               <div className="stat-number">85</div>
               <div className="stat-label">% Tỷ lệ trúng thầu</div>
             </div>

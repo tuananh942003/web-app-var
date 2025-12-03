@@ -38,7 +38,7 @@ const handleCloseRegister = () => {
         <div className="nav-menu">
           <Link to="/">Trang chủ</Link>
           <Link to="/about">Giới thiệu</Link>
-          <Link to="/services">Dịch vụ</Link>
+          <Link to="/service">Dịch vụ</Link>
           <Link to="/news">Tin tức</Link>
           <Link to="/contact">Liên hệ</Link>
         </div>

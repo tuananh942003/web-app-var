@@ -9,6 +9,8 @@ const AdminPage = () => {
   const [loginData, setLoginData] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [posts, setPosts] = useState([]);
+  const [services, setServices] = useState([]);
 
   // Kiểm tra xem đã login chưa khi component mount
   useEffect(() => {
@@ -16,6 +18,8 @@ const AdminPage = () => {
     if (adminToken) {
       setIsLoggedIn(true);
       fetchUsers();
+      fetchPosts();
+      fetchServices();
     } else {
       setLoading(false);
     }
@@ -79,6 +83,60 @@ const AdminPage = () => {
       setLoading(false);
     }
   };
+  //hãy viết cho tôi logic lấy dư liệu bài viết từ server dưới dạng step và comment từng bước không viet code
+  // Bước 1: Khai báo một state để lưu trữ danh sách bài viết
+  // Bước 2: Tạo một hàm bất đồng bộ fetchPosts để lấy dữ liệu bài viết từ server
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      // Bước 3: Gọi API để lấy dữ liệu bài viết
+      const response = await fetch('http://localhost:3001/api/posts');
+      // Bước 4: Kiểm tra phản hồi từ server
+      if (!response.ok) {
+        throw new Error('Không thể lấy dữ liệu bài viết');
+      }
+      // Bước 5: Chuyển đổi phản hồi thành định dạng JSON
+      const data = await response.json();
+      // Bước 6: Cập nhật state với danh sách bài viết nhận được
+      setPosts(data);
+      setError(null);
+    } catch (err) {
+      // Bước 7: Xử lý lỗi nếu có
+      setError(err.message);
+      console.error('Lỗi khi lấy dữ liệu bài viết:', err);
+      } finally {
+      setLoading(false);
+    }
+  };
+
+  // Lấy dữ liệu dịch vụ từ server
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:3001/api/services');
+      
+      if (!response.ok) {
+        throw new Error('Không thể lấy dữ liệu dịch vụ');
+      }
+      
+      const data = await response.json();
+      setServices(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Lỗi khi lấy dữ liệu dịch vụ:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   // Nếu chưa login, hiển thị form login
   if (!isLoggedIn) {
@@ -191,14 +249,14 @@ const AdminPage = () => {
                 <div className="stat-card">
                   <div className="stat-icon">📝</div>
                   <div className="stat-info">
-                    <h3>0</h3>
+                    <h3>{posts.length}</h3>
                     <p>Tổng bài viết</p>
                   </div>
                 </div>
                 <div className="stat-card">
                   <div className="stat-icon">🛠️</div>
                   <div className="stat-info">
-                    <h3>0</h3>
+                    <h3>{services.length}</h3>
                     <p>Tổng dịch vụ</p>
                   </div>
                 </div>
@@ -266,15 +324,86 @@ const AdminPage = () => {
 
           {activeMenu === 'posts' && (
             <div className="content-section">
-              <h2 className="section-title">📝 Quản lý bài viết</h2>
-              <p className="placeholder-text">Chức năng đang được phát triển...</p>
+              <div className="users-header">
+                <h2 className="section-title">📝 Quản lý bài viết</h2>
+                <button onClick={fetchPosts} className="refresh-button">
+                  🔄 Làm mới
+                </button>
+              </div>
+
+              {loading && <p className="loading-text">⏳ Đang tải dữ liệu...</p>}
+              
+              {error && (
+                <div className="error-message">
+                  ❌ Lỗi: {error}
+                </div>
+              )}
+              
+              {!loading && !error && posts.length === 0 && (
+                <p className="no-users">Chưa có bài viết nào trong hệ thống</p>
+              )}
+
+              {!loading && !error && posts.length > 0 && (
+                <div className="posts-grid">
+                  {posts.map((post) => (
+                    <div key={post._id} className="post-card">
+                      {post.imageUrl && (
+                        <div className="post-image">
+                          <img src={post.imageUrl} alt={post.title} />
+                        </div>
+                      )}
+                      <div className="post-content">
+                        <h3 className="post-title">{post.title}</h3>
+                        <p className="post-text">{post.content}</p>
+                        <div className="post-footer">
+                          <span className="post-date">
+                            📅 {new Date(post.createdAt).toLocaleDateString('vi-VN')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
           {activeMenu === 'services' && (
             <div className="content-section">
               <h2 className="section-title">🛠️ Quản lý dịch vụ</h2>
-              <p className="placeholder-text">Chức năng đang được phát triển...</p>
+              <button onClick={fetchServices} className="refresh-button">
+                🔄 Làm mới
+              </button>
+              {loading && <p className="loading-text">⏳ Đang tải dữ liệu...</p>}
+              {error && (
+                <div className="error-message">
+                  ❌ Lỗi: {error}
+                </div>
+              )}
+              {!loading && !error && services.length === 0 && (
+                <p className="no-users">Chưa có dịch vụ nào trong hệ thống</p>
+              )}
+              {!loading && !error && services.length > 0 && (
+                <div className="services-grid">
+                  {services.map((service) => (
+                    <div key={service._id} className="service-card">
+                      <div className="service-header">
+                        <div className="service-icon">
+                          <i className={service.icon}></i>
+                        </div>
+                        <h3 className="service-title">{service.title}</h3>
+                      </div>
+                      <p className="service-content">{service.content}</p>
+                      <ul className="service-description">
+                        {service.description.map((desc, index) => (
+                          <li key={index}>{desc}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              )}
+
             </div>
           )}
 
