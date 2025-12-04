@@ -104,7 +104,7 @@ export const HomePage = () => {
       </div>
       <section style={{ padding: "60px" }} id="about-section"></section>
       <div className="container-service">
-        <div className="service-header">
+        <div className="service-header-home">
           <h4>Dịch vụ của chúng tôi</h4>
           <p>Dịch vụ tư vấn đấu thầu chuyên nghiệp và toàn diện</p>
         </div>

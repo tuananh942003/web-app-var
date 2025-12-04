@@ -12,6 +12,17 @@ const AdminPage = () => {
   const [posts, setPosts] = useState([]);
   const [services, setServices] = useState([]);
 
+  // Modal states
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
+  
+  // Form states
+  const [userForm, setUserForm] = useState({ username: '', email: '', password: '', role: 'user' });
+  const [postForm, setPostForm] = useState({ title: '', content: '', imageUrl: '' });
+  const [serviceForm, setServiceForm] = useState({ icon: '', title: '', content: '', description: [] });
+
   // Kiểm tra xem đã login chưa khi component mount
   useEffect(() => {
     const adminToken = localStorage.getItem('adminToken');
@@ -31,7 +42,7 @@ const AdminPage = () => {
     setLoginError('');
     
     try {
-      const response = await fetch('http://localhost:3001/api/login', {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -137,6 +148,173 @@ const AdminPage = () => {
   useEffect(() => {
     fetchServices();
   }, []);
+
+  // ============ USER CRUD FUNCTIONS ============
+  const handleAddUser = () => {
+    setEditingItem(null);
+    setUserForm({ username: '', email: '', password: '', role: 'user' });
+    setShowUserModal(true);
+  };
+
+  const handleEditUser = (user) => {
+    setEditingItem(user);
+    setUserForm({ username: user.username, email: user.email, password: '', role: user.role });
+    setShowUserModal(true);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        fetchUsers();
+      }
+    } catch (err) {
+      console.error('Lỗi khi xóa người dùng:', err);
+    }
+  };
+
+  const handleSaveUser = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const url = editingItem 
+        ? `http://localhost:3001/api/users/${editingItem._id}`
+        : 'http://localhost:3001/api/users';
+      
+      const method = editingItem ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userForm),
+      });
+      
+      if (response.ok) {
+        setShowUserModal(false);
+        fetchUsers();
+      }
+    } catch (err) {
+      console.error('Lỗi khi lưu người dùng:', err);
+    }
+  };
+
+  // ============ POST CRUD FUNCTIONS ============
+  const handleAddPost = () => {
+    setEditingItem(null);
+    setPostForm({ title: '', content: '', imageUrl: '' });
+    setShowPostModal(true);
+  };
+
+  const handleEditPost = (post) => {
+    setEditingItem(post);
+    setPostForm({ title: post.title, content: post.content, imageUrl: post.imageUrl || '' });
+    setShowPostModal(true);
+  };
+
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3001/api/posts/${postId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        fetchPosts();
+      }
+    } catch (err) {
+      console.error('Lỗi khi xóa bài viết:', err);
+    }
+  };
+
+  const handleSavePost = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const url = editingItem 
+        ? `http://localhost:3001/api/posts/${editingItem._id}`
+        : 'http://localhost:3001/api/posts';
+      
+      const method = editingItem ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postForm),
+      });
+      
+      if (response.ok) {
+        setShowPostModal(false);
+        fetchPosts();
+      }
+    } catch (err) {
+      console.error('Lỗi khi lưu bài viết:', err);
+    }
+  };
+
+  // ============ SERVICE CRUD FUNCTIONS ============
+  const handleAddService = () => {
+    setEditingItem(null);
+    setServiceForm({ icon: '', title: '', content: '', description: [] });
+    setShowServiceModal(true);
+  };
+
+  const handleEditService = (service) => {
+    setEditingItem(service);
+    setServiceForm({ 
+      icon: service.icon, 
+      title: service.title, 
+      content: service.content, 
+      description: service.description || [] 
+    });
+    setShowServiceModal(true);
+  };
+
+  const handleDeleteService = async (serviceId) => {
+    if (!window.confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3001/api/services/${serviceId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        fetchServices();
+      }
+    } catch (err) {
+      console.error('Lỗi khi xóa dịch vụ:', err);
+    }
+  };
+
+  const handleSaveService = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const url = editingItem 
+        ? `http://localhost:3001/api/services/${editingItem._id}`
+        : 'http://localhost:3001/api/services';
+      
+      const method = editingItem ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(serviceForm),
+      });
+      
+      if (response.ok) {
+        setShowServiceModal(false);
+        fetchServices();
+      }
+    } catch (err) {
+      console.error('Lỗi khi lưu dịch vụ:', err);
+    }
+  };
 
   // Nếu chưa login, hiển thị form login
   if (!isLoggedIn) {
@@ -280,9 +458,14 @@ const AdminPage = () => {
                     <h2 className="users-title">
                       👥 Danh sách người dùng ({users.length})
                     </h2>
-                    <button onClick={fetchUsers} className="refresh-button">
-                      🔄 Làm mới
-                    </button>
+                    <div className="header-actions">
+                      <button onClick={handleAddUser} className="add-button">
+                        ➕ Thêm người dùng
+                      </button>
+                      <button onClick={fetchUsers} className="refresh-button">
+                        🔄 Làm mới
+                      </button>
+                    </div>
                   </div>
                   
                   {users.length === 0 ? (
@@ -296,6 +479,7 @@ const AdminPage = () => {
                           <th>Email</th>
                           <th>Role</th>
                           <th>Ngày tạo</th>
+                          <th>Thao tác</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -312,6 +496,16 @@ const AdminPage = () => {
                             <td>
                               {new Date(user.createdAt).toLocaleString('vi-VN')}
                             </td>
+                            <td>
+                              <div className="action-buttons">
+                                <button onClick={() => handleEditUser(user)} className="edit-btn" title="Sửa">
+                                  ✏️
+                                </button>
+                                <button onClick={() => handleDeleteUser(user._id)} className="delete-btn" title="Xóa">
+                                  🗑️
+                                </button>
+                              </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -326,9 +520,14 @@ const AdminPage = () => {
             <div className="content-section">
               <div className="users-header">
                 <h2 className="section-title">📝 Quản lý bài viết</h2>
-                <button onClick={fetchPosts} className="refresh-button">
-                  🔄 Làm mới
-                </button>
+                <div className="header-actions">
+                  <button onClick={handleAddPost} className="add-button">
+                    ➕ Thêm bài viết
+                  </button>
+                  <button onClick={fetchPosts} className="refresh-button">
+                    🔄 Làm mới
+                  </button>
+                </div>
               </div>
 
               {loading && <p className="loading-text">⏳ Đang tải dữ liệu...</p>}
@@ -359,6 +558,14 @@ const AdminPage = () => {
                           <span className="post-date">
                             📅 {new Date(post.createdAt).toLocaleDateString('vi-VN')}
                           </span>
+                          <div className="action-buttons">
+                            <button onClick={() => handleEditPost(post)} className="edit-btn" title="Sửa">
+                              ✏️
+                            </button>
+                            <button onClick={() => handleDeletePost(post._id)} className="delete-btn" title="Xóa">
+                              🗑️
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -370,10 +577,17 @@ const AdminPage = () => {
 
           {activeMenu === 'services' && (
             <div className="content-section">
-              <h2 className="section-title">🛠️ Quản lý dịch vụ</h2>
-              <button onClick={fetchServices} className="refresh-button">
-                🔄 Làm mới
-              </button>
+              <div className="users-header">
+                <h2 className="section-title">🛠️ Quản lý dịch vụ</h2>
+                <div className="header-actions">
+                  <button onClick={handleAddService} className="add-button">
+                    ➕ Thêm dịch vụ
+                  </button>
+                  <button onClick={fetchServices} className="refresh-button">
+                    🔄 Làm mới
+                  </button>
+                </div>
+              </div>
               {loading && <p className="loading-text">⏳ Đang tải dữ liệu...</p>}
               {error && (
                 <div className="error-message">
@@ -399,6 +613,14 @@ const AdminPage = () => {
                           <li key={index}>{desc}</li>
                         ))}
                       </ul>
+                      <div className="card-actions">
+                        <button onClick={() => handleEditService(service)} className="edit-btn" title="Sửa">
+                          ✏️ Sửa
+                        </button>
+                        <button onClick={() => handleDeleteService(service._id)} className="delete-btn" title="Xóa">
+                          🗑️ Xóa
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -415,6 +637,164 @@ const AdminPage = () => {
           )}
         </div>
       </div>
+
+      {/* User Modal */}
+      {showUserModal && (
+        <div className="modal-overlay" onClick={() => setShowUserModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">{editingItem ? '✏️ Sửa người dùng' : '➕ Thêm người dùng'}</h3>
+            <form onSubmit={handleSaveUser}>
+              <div className="form-group">
+                <label>Username</label>
+                <input
+                  type="text"
+                  value={userForm.username}
+                  onChange={(e) => setUserForm({...userForm, username: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={userForm.email}
+                  onChange={(e) => setUserForm({...userForm, email: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Password {editingItem && '(để trống nếu không đổi)'}</label>
+                <input
+                  type="password"
+                  value={userForm.password}
+                  onChange={(e) => setUserForm({...userForm, password: e.target.value})}
+                  required={!editingItem}
+                />
+              </div>
+              <div className="form-group">
+                <label>Role</label>
+                <select
+                  value={userForm.role}
+                  onChange={(e) => setUserForm({...userForm, role: e.target.value})}
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div className="modal-actions">
+                <button type="button" onClick={() => setShowUserModal(false)} className="cancel-btn">
+                  Hủy
+                </button>
+                <button type="submit" className="submit-btn">
+                  {editingItem ? 'Cập nhật' : 'Thêm'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Post Modal */}
+      {showPostModal && (
+        <div className="modal-overlay" onClick={() => setShowPostModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">{editingItem ? '✏️ Sửa bài viết' : '➕ Thêm bài viết'}</h3>
+            <form onSubmit={handleSavePost}>
+              <div className="form-group">
+                <label>Tiêu đề</label>
+                <input
+                  type="text"
+                  value={postForm.title}
+                  onChange={(e) => setPostForm({...postForm, title: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Nội dung</label>
+                <textarea
+                  rows="5"
+                  value={postForm.content}
+                  onChange={(e) => setPostForm({...postForm, content: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>URL hình ảnh</label>
+                <input
+                  type="url"
+                  value={postForm.imageUrl}
+                  onChange={(e) => setPostForm({...postForm, imageUrl: e.target.value})}
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" onClick={() => setShowPostModal(false)} className="cancel-btn">
+                  Hủy
+                </button>
+                <button type="submit" className="submit-btn">
+                  {editingItem ? 'Cập nhật' : 'Thêm'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Service Modal */}
+      {showServiceModal && (
+        <div className="modal-overlay" onClick={() => setShowServiceModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">{editingItem ? '✏️ Sửa dịch vụ' : '➕ Thêm dịch vụ'}</h3>
+            <form onSubmit={handleSaveService}>
+              <div className="form-group">
+                <label>Icon (FontAwesome class)</label>
+                <input
+                  type="text"
+                  value={serviceForm.icon}
+                  onChange={(e) => setServiceForm({...serviceForm, icon: e.target.value})}
+                  placeholder="fa-solid fa-code"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Tiêu đề</label>
+                <input
+                  type="text"
+                  value={serviceForm.title}
+                  onChange={(e) => setServiceForm({...serviceForm, title: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Nội dung</label>
+                <textarea
+                  rows="3"
+                  value={serviceForm.content}
+                  onChange={(e) => setServiceForm({...serviceForm, content: e.target.value})}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Mô tả (mỗi dòng một mục)</label>
+                <textarea
+                  rows="4"
+                  value={serviceForm.description.join('\n')}
+                  onChange={(e) => setServiceForm({...serviceForm, description: e.target.value.split('\n')})}
+                  placeholder="Tính năng 1&#10;Tính năng 2&#10;Tính năng 3"
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" onClick={() => setShowServiceModal(false)} className="cancel-btn">
+                  Hủy
+                </button>
+                <button type="submit" className="submit-btn">
+                  {editingItem ? 'Cập nhật' : 'Thêm'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

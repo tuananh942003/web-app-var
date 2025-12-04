@@ -163,18 +163,18 @@
     font-size: 16px;
     color: #333;
 }
-.service-header{
+.service-header-home{
     text-align: center;
     margin-top: 50px;
 }
-.service-header h4{
+.service-header-home h4{
     font-family: "Montserrat", sans-serif;
     font-weight: 1000;
     font-size: 35px;
     margin-bottom: 10px;
     
 }
-.service-header p{
+.service-header-home p{
     font-family: "Montserrat", sans-serif;
     font-weight: 400;
     font-size: 18px;
