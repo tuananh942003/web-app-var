@@ -11,6 +11,8 @@ import About from "./pages/About-page/about.jsx";
 import { Contact } from "./component/contact.jsx";
 import AdminPage from "./component/admin-page.jsx";
 import ServicePage from "./pages/Service-page/service-page.jsx";
+import NewsPage from "./pages/News-page/news-page.jsx";
+import NewsDetail from "./pages/News-page/news-detail.jsx";
 import { Route, Routes } from "react-router-dom";
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/service" element={<ServicePage />} />
+                <Route path="/news" element={<NewsPage />} />
+                <Route path="/news/:id" element={<NewsDetail />} />
               </Routes>
               <Footer />
             </>

@@ -141,6 +141,10 @@
   transform: translateY(0);
 }
 
+.login-button:focus {
+  outline: none;
+}
+
 .login-note {
   margin-top: 25px;
   text-align: center;
@@ -190,6 +194,10 @@
   box-shadow: 0 8px 15px rgba(245, 87, 108, 0.4);
 }
 
+.logout-button:focus {
+  outline: none;
+}
+
 .loading-text {
   text-align: center;
   padding: 40px;
@@ -226,40 +234,76 @@
   z-index: 1;
 }
 
-.users-header {
-  display: flex;
-  justify-content: space-between;
+.admin-container .users-header {
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
   align-items: center;
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #ecf0f1;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid;
+  border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
 }
 
-.users-title {
-  font-size: 24px;
-  color: #34495e;
+.admin-container .users-title,
+.admin-container .section-title {
+  font-size: 26px !important;
+  color: #2c3e50 !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  text-align: left !important;
+  display: inline-block !important;
+}
+
+.admin-container .header-actions {
+  display: flex !important;
+  gap: 10px;
+  align-items: center;
+  justify-self: end;
+}
+
+.admin-container .add-button,
+.admin-container .refresh-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 600;
-  margin: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.refresh-button {
-  padding: 12px 25px;
+.admin-container .add-button {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.admin-container .add-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.admin-container .add-button:focus {
+  outline: none;
+}
+
+.admin-container .refresh-button {
   background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
   color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.3);
 }
 
-.refresh-button:hover {
+.admin-container .refresh-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px rgba(56, 239, 125, 0.3);
+  box-shadow: 0 6px 20px rgba(17, 153, 142, 0.4);
+}
+
+.admin-container .refresh-button:focus {
+  outline: none;
 }
 
 .no-users {
@@ -360,10 +404,13 @@
     text-align: center;
   }
 
-  .users-header {
-    flex-direction: column;
+  .admin-container .users-header {
+    grid-template-columns: 1fr !important;
     gap: 15px;
-    align-items: flex-start;
+  }
+
+  .admin-container .header-actions {
+    justify-self: start;
   }
 
   .users-table {
@@ -471,16 +518,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.section-title {
-  font-size: 28px;
-  color: #2c3e50;
-  font-weight: 700;
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 3px solid;
-  border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1;
 }
 
 .placeholder-text {
@@ -700,14 +737,9 @@
   font-size: 16px;
 }
 
-/* Action Buttons */
-.header-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
+/* Action Buttons - Removed duplicate, using version from line 247 */
 
-.add-button {
+.admin-container .add-button {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border: none;
@@ -720,9 +752,13 @@
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
-.add-button:hover {
+.admin-container .add-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.admin-container .add-button:focus {
+  outline: none;
 }
 
 .action-buttons {
@@ -750,6 +786,11 @@
 .edit-btn:hover {
   background: #2980b9;
   transform: scale(1.05);
+}
+
+.edit-btn:focus,
+.delete-btn:focus {
+  outline: none;
 }
 
 .delete-btn {
@@ -844,6 +885,52 @@
   min-height: 80px;
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  padding-right: 45px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  color: #7f8c8d;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border-radius: 4px;
+}
+
+.toggle-password-btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.toggle-password-btn:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+  transform: scale(1.1);
+}
+
+.toggle-password-btn:active {
+  transform: scale(0.95);
+}
+
+.toggle-password-btn i {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
 .modal-actions {
   display: flex;
   gap: 12px;
@@ -916,14 +1003,14 @@
     font-size: 20px;
   }
 
-  .header-actions {
+  .admin-container .header-actions {
     flex-direction: column;
     gap: 8px;
     width: 100%;
   }
 
-  .add-button,
-  .refresh-button {
+  .admin-container .add-button,
+  .admin-container .refresh-button {
     width: 100%;
   }
 }

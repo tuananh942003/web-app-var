@@ -3,8 +3,8 @@ import User from '../model/user.model.js';
 
 export const createUser = async (req, res) => {
   try {
-    const { username, email, password, role } = req.body;
-    const newUser = new User({ username, email, password, role });
+    const { name, username, email, password, role } = req.body;
+    const newUser = new User({ name, username, email, password, role });
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
@@ -27,8 +27,8 @@ export const getAllUsers = async (req, res) => {
 export const updateUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, email, password, role } = req.body;
-    const updateData = { username, email, role };
+    const { name, username, email, password, role } = req.body;
+    const updateData = { name, username, email, role };
     if (password) {
       updateData.password = password;
     }

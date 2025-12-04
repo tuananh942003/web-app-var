@@ -11,6 +11,14 @@ import { NewsCard } from "./card.jsx";
 import { Contact } from "../../component/contact.jsx";
 import { Link } from "react-router-dom";
 export const HomePage = () => {
+  
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact-section');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <>
       
@@ -22,10 +30,12 @@ export const HomePage = () => {
             Chúng tôi đồng hành cùng bạn chinh phục mọi dự án đấu thầu.
           </p>
           <div className="home-page-action">
-            <button>
-              <i className="fa-solid fa-arrow-right"></i> Khám phá dịch vụ{" "}
-            </button>
-            <button>
+            <Link to="/service">
+              <button>
+                <i className="fa-solid fa-arrow-right"></i> Khám phá dịch vụ{" "}
+              </button>
+            </Link>
+            <button onClick={scrollToContact}>
               <i className="fa-solid fa-phone"></i> Liên hệ ngay
             </button>
           </div>
@@ -138,7 +148,7 @@ export const HomePage = () => {
           })}
         </div>
       </div>
-      <section style={{ padding: "60px" }} id="about-section"></section>
+      <section style={{ padding: "60px" }} id="contact-section"></section>
       <Contact />
       
     

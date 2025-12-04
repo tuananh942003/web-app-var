@@ -3,7 +3,7 @@ import User from '../model/user.model.js';
 export const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username, password, role: 'admin' });
+    const user = await User.findOne({ username, password });
     if (user) {
       res.status(200).json({ message: 'Login successful', user });  
     } else {

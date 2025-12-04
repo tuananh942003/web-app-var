@@ -19,18 +19,27 @@ const AdminPage = () => {
   const [editingItem, setEditingItem] = useState(null);
   
   // Form states
-  const [userForm, setUserForm] = useState({ username: '', email: '', password: '', role: 'user' });
+  const [userForm, setUserForm] = useState({ name: '', username: '', email: '', password: '', role: 'user' });
   const [postForm, setPostForm] = useState({ title: '', content: '', imageUrl: '' });
   const [serviceForm, setServiceForm] = useState({ icon: '', title: '', content: '', description: [] });
+  const [showPassword, setShowPassword] = useState(false);
 
   // Kiểm tra xem đã login chưa khi component mount
   useEffect(() => {
     const adminToken = localStorage.getItem('adminToken');
     if (adminToken) {
-      setIsLoggedIn(true);
-      fetchUsers();
-      fetchPosts();
-      fetchServices();
+      const user = JSON.parse(adminToken);
+      // Kiểm tra xem user có phải admin không
+      if (user.role === 'admin') {
+        setIsLoggedIn(true);
+        fetchUsers();
+        fetchPosts();
+        fetchServices();
+      } else {
+        // Nếu không phải admin, xóa token và yêu cầu đăng nhập lại
+        localStorage.removeItem('adminToken');
+        setLoading(false);
+      }
     } else {
       setLoading(false);
     }
@@ -53,13 +62,19 @@ const AdminPage = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Kiểm tra xem user có phải là admin không
+        if (data.user.role !== 'admin') {
+          setLoginError('Chỉ admin mới có quyền truy cập trang này!');
+          return;
+        }
         // Lưu token vào localStorage
         localStorage.setItem('adminToken', JSON.stringify(data.user));
         setIsLoggedIn(true);
         fetchUsers();
+        fetchPosts();
+        fetchServices();
       } else {
-        setLoginError(data.message || 'Đăng nhập thất bại. Chỉ admin mới có quyền truy cập!');
-        setLoginError('Không thể đăng nhập. Vui lòng kiểm tra lại thông tin.');
+        setLoginError(data.message || 'Đăng nhập thất bại!');
       }
     } catch (err) {
       setLoginError('Lỗi kết nối đến server');
@@ -152,13 +167,13 @@ const AdminPage = () => {
   // ============ USER CRUD FUNCTIONS ============
   const handleAddUser = () => {
     setEditingItem(null);
-    setUserForm({ username: '', email: '', password: '', role: 'user' });
+    setUserForm({ name: '', username: '', email: '', password: '', role: 'user' });
     setShowUserModal(true);
   };
 
   const handleEditUser = (user) => {
     setEditingItem(user);
-    setUserForm({ username: user.username, email: user.email, password: '', role: user.role });
+    setUserForm({ name: user.name || '', username: user.username, email: user.email, password: user.password || '', role: user.role });
     setShowUserModal(true);
   };
 
@@ -475,6 +490,7 @@ const AdminPage = () => {
                       <thead>
                         <tr>
                           <th>ID</th>
+                          <th>Tên</th>
                           <th>Username</th>
                           <th>Email</th>
                           <th>Role</th>
@@ -486,6 +502,7 @@ const AdminPage = () => {
                         {users.map((user) => (
                           <tr key={user._id}>
                             <td>{user._id}</td>
+                            <td>{user.name || 'N/A'}</td>
                             <td>{user.username}</td>
                             <td>{user.email}</td>
                             <td>
@@ -518,7 +535,7 @@ const AdminPage = () => {
 
           {activeMenu === 'posts' && (
             <div className="content-section">
-              <div className="users-header">
+              <div className="users-header posts-header">
                 <h2 className="section-title">📝 Quản lý bài viết</h2>
                 <div className="header-actions">
                   <button onClick={handleAddPost} className="add-button">
@@ -577,7 +594,7 @@ const AdminPage = () => {
 
           {activeMenu === 'services' && (
             <div className="content-section">
-              <div className="users-header">
+              <div className="users-header services-header">
                 <h2 className="section-title">🛠️ Quản lý dịch vụ</h2>
                 <div className="header-actions">
                   <button onClick={handleAddService} className="add-button">
@@ -645,6 +662,16 @@ const AdminPage = () => {
             <h3 className="modal-title">{editingItem ? '✏️ Sửa người dùng' : '➕ Thêm người dùng'}</h3>
             <form onSubmit={handleSaveUser}>
               <div className="form-group">
+                <label>Tên đầy đủ</label>
+                <input
+                  type="text"
+                  value={userForm.name}
+                  onChange={(e) => setUserForm({...userForm, name: e.target.value})}
+                  required
+                  placeholder="Nhập tên đầy đủ"
+                />
+              </div>
+              <div className="form-group">
                 <label>Username</label>
                 <input
                   type="text"
@@ -663,13 +690,24 @@ const AdminPage = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Password {editingItem && '(để trống nếu không đổi)'}</label>
-                <input
-                  type="password"
-                  value={userForm.password}
-                  onChange={(e) => setUserForm({...userForm, password: e.target.value})}
-                  required={!editingItem}
-                />
+                <label>Password {editingItem && '(có thể thay đổi mật khẩu mới)'}</label>
+                <div className="password-input-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={userForm.password}
+                    onChange={(e) => setUserForm({...userForm, password: e.target.value})}
+                    required={!editingItem}
+                    placeholder={editingItem ? "Mật khẩu hiện tại" : "Nhập mật khẩu"}
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password-btn"
+                    onClick={() => setShowPassword(!showPassword)}
+                    title={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                  >
+                    <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                  </button>
+                </div>
               </div>
               <div className="form-group">
                 <label>Role</label>

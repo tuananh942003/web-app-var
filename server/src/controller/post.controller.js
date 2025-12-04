@@ -19,6 +19,19 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+export const getPostById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: 'Không tìm thấy bài viết' });
+    }
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ message: 'Lỗi khi lấy chi tiết bài viết', error });
+  }
+};
+
 export const updatePostById = async (req, res) => {
   try {
     const { id } = req.params;
