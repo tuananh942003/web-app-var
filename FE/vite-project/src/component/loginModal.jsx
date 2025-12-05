@@ -16,7 +16,7 @@ export const LoginModal = ({isOpen, onClose, openModalRegister, onLoginSuccess})
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3001/api/auth/login', {
+            const response = await fetch('http://localhost:3001/api/users/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -25,7 +25,9 @@ export const LoginModal = ({isOpen, onClose, openModalRegister, onLoginSuccess})
             const data = await response.json();
 
             if (response.ok) {
-                // Lưu thông tin user vào localStorage
+                // Lưu cả 2 token và user vào localStorage
+                localStorage.setItem('accessToken', data.acesstoken);
+                localStorage.setItem('refreshToken', data.refreshtoken);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 onLoginSuccess(data.user);
                 onClose();

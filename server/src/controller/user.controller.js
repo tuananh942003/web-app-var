@@ -1,5 +1,5 @@
 import User from '../model/user.model.js';
-
+import jwt from 'jsonwebtoken';
 
 export const createUser = async (req, res) => {
   try {
@@ -48,3 +48,43 @@ export const deleteUserById = async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi xóa người dùng', error });
   }
 };
+
+
+const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key-here';
+
+export const loginUser = async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username, password });
+    if (user) {
+      // Tạo JWT token
+      const payload = { 
+        userId: user._id,
+        username: user.username,
+        role: user.role
+      };
+      const acesstoken = jwt.sign(payload, SECRET_KEY, { algorithm: 'HS256', expiresIn: '24h' });
+      const refreshtoken = jwt.sign(payload, SECRET_KEY,  { expiresIn: '7d' });
+
+      res.status(200).json({ 
+        message: 'Login successful', 
+        user: {
+          _id: user._id,
+          name: user.name,
+          username: user.username,
+          email: user.email,
+          role: user.role
+        },
+        acesstoken,
+        refreshtoken
+      });  
+    } else {
+      res.status(401).json({ message: 'Invalid credentials' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Lỗi khi đăng nhập', error });
+  }
+};
+
+
+

@@ -51,7 +51,7 @@ const AdminPage = () => {
     setLoginError('');
     
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const response = await fetch('http://localhost:3001/api/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,9 @@ const AdminPage = () => {
           setLoginError('Chỉ admin mới có quyền truy cập trang này!');
           return;
         }
-        // Lưu token vào localStorage
+        // Lưu token và user vào localStorage
+        localStorage.setItem('accessToken', data.acesstoken);
+        localStorage.setItem('refreshToken', data.refreshtoken);
         localStorage.setItem('adminToken', JSON.stringify(data.user));
         setIsLoggedIn(true);
         fetchUsers();
@@ -93,7 +95,12 @@ const AdminPage = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/api/users');
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('http://localhost:3001/api/users', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
       if (!response.ok) {
         throw new Error('Không thể lấy dữ liệu người dùng');
@@ -115,8 +122,13 @@ const AdminPage = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem('accessToken');
       // Bước 3: Gọi API để lấy dữ liệu bài viết
-      const response = await fetch('http://localhost:3001/api/posts');
+      const response = await fetch('http://localhost:3001/api/posts', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       // Bước 4: Kiểm tra phản hồi từ server
       if (!response.ok) {
         throw new Error('Không thể lấy dữ liệu bài viết');
@@ -139,7 +151,12 @@ const AdminPage = () => {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3001/api/services');
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch('http://localhost:3001/api/services', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       
       if (!response.ok) {
         throw new Error('Không thể lấy dữ liệu dịch vụ');
@@ -181,8 +198,12 @@ const AdminPage = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) return;
     
     try {
+      const token = localStorage.getItem('accessToken');
       const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       
       if (response.ok) {
@@ -197,6 +218,7 @@ const AdminPage = () => {
     e.preventDefault();
     
     try {
+      const token = localStorage.getItem('accessToken');
       const url = editingItem 
         ? `http://localhost:3001/api/users/${editingItem._id}`
         : 'http://localhost:3001/api/users';
@@ -205,7 +227,10 @@ const AdminPage = () => {
       
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(userForm),
       });
       
@@ -235,8 +260,12 @@ const AdminPage = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa bài viết này?')) return;
     
     try {
+      const token = localStorage.getItem('accessToken');
       const response = await fetch(`http://localhost:3001/api/posts/${postId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       
       if (response.ok) {
@@ -251,6 +280,7 @@ const AdminPage = () => {
     e.preventDefault();
     
     try {
+      const token = localStorage.getItem('accessToken');
       const url = editingItem 
         ? `http://localhost:3001/api/posts/${editingItem._id}`
         : 'http://localhost:3001/api/posts';
@@ -259,7 +289,10 @@ const AdminPage = () => {
       
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(postForm),
       });
       
@@ -294,8 +327,12 @@ const AdminPage = () => {
     if (!window.confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')) return;
     
     try {
+      const token = localStorage.getItem('accessToken');
       const response = await fetch(`http://localhost:3001/api/services/${serviceId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       
       if (response.ok) {
@@ -310,6 +347,7 @@ const AdminPage = () => {
     e.preventDefault();
     
     try {
+      const token = localStorage.getItem('accessToken');
       const url = editingItem 
         ? `http://localhost:3001/api/services/${editingItem._id}`
         : 'http://localhost:3001/api/services';
@@ -318,7 +356,10 @@ const AdminPage = () => {
       
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(serviceForm),
       });
       
@@ -536,7 +577,7 @@ const AdminPage = () => {
           {activeMenu === 'posts' && (
             <div className="content-section">
               <div className="users-header posts-header">
-                <h2 className="section-title">📝 Quản lý bài viết</h2>
+                <h2 className="section-title-admin">📝 Quản lý bài viết</h2>
                 <div className="header-actions">
                   <button onClick={handleAddPost} className="add-button">
                     ➕ Thêm bài viết
@@ -595,7 +636,7 @@ const AdminPage = () => {
           {activeMenu === 'services' && (
             <div className="content-section">
               <div className="users-header services-header">
-                <h2 className="section-title">🛠️ Quản lý dịch vụ</h2>
+                <h2 className="section-title-admin">🛠️ Quản lý dịch vụ</h2>
                 <div className="header-actions">
                   <button onClick={handleAddService} className="add-button">
                     ➕ Thêm dịch vụ

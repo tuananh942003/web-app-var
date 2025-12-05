@@ -84,6 +84,63 @@ export const ServicePage = () => {
                     </div>
                 )}
             </div>
+
+            {/* Quy trình làm việc */}
+            <div className="process-section">
+                <div className="process-header">
+                    <h2>Quy trình làm việc</h2>
+                    <p>Quy trình chuyên nghiệp, minh bạch và hiệu quả</p>
+                </div>
+                <div className="process-timeline">
+                    <div className="process-step">
+                        <div className="step-number">01</div>
+                        <div className="step-icon">
+                            <i className="fa-solid fa-file-contract"></i>
+                        </div>
+                        <h3 className="step-title">Tiếp nhận yêu cầu</h3>
+                        <p className="step-description">
+                            Lắng nghe và ghi nhận đầy đủ yêu cầu của khách hàng. 
+                            Tư vấn giải pháp phù hợp nhất với nhu cầu và ngân sách.
+                        </p>
+                    </div>
+
+                    <div className="process-step">
+                        <div className="step-number">02</div>
+                        <div className="step-icon">
+                            <i className="fa-solid fa-clipboard-check"></i>
+                        </div>
+                        <h3 className="step-title">Đánh giá và báo giá</h3>
+                        <p className="step-description">
+                            Phân tích chi tiết dự án, đánh giá khối lượng công việc.
+                            Đưa ra báo giá minh bạch và thời gian thực hiện cụ thể.
+                        </p>
+                    </div>
+
+                    <div className="process-step">
+                        <div className="step-number">03</div>
+                        <div className="step-icon">
+                            <i className="fa-solid fa-gear"></i>
+                        </div>
+                        <h3 className="step-title">Thực hiện dự án</h3>
+                        <p className="step-description">
+                            Triển khai dự án theo đúng tiến độ đã cam kết.
+                            Thường xuyên cập nhật tiến độ và điều chỉnh khi cần thiết.
+                        </p>
+                    </div>
+
+                    <div className="process-step">
+                        <div className="step-number">04</div>
+                        <div className="step-icon">
+                            <i className="fa-solid fa-handshake"></i>
+                        </div>
+                        <h3 className="step-title">Bàn giao và hỗ trợ</h3>
+                        <p className="step-description">
+                            Bàn giao sản phẩm hoàn chỉnh và hướng dẫn sử dụng chi tiết.
+                            Hỗ trợ kỹ thuật và bảo hành theo cam kết.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
