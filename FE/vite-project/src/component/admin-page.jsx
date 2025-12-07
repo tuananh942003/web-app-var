@@ -12,6 +12,12 @@ const AdminPage = () => {
   const [posts, setPosts] = useState([]);
   const [services, setServices] = useState([]);
 
+  // Pagination states
+  const [currentUserPage, setCurrentUserPage] = useState(1);
+  const [currentPostPage, setCurrentPostPage] = useState(1);
+  const [currentServicePage, setCurrentServicePage] = useState(1);
+  const itemsPerPage = 6;
+
   // Modal states
   const [showUserModal, setShowUserModal] = useState(false);
   const [showPostModal, setShowPostModal] = useState(false);
@@ -180,6 +186,52 @@ const AdminPage = () => {
   useEffect(() => {
     fetchServices();
   }, []);
+
+  // ============ PAGINATION LOGIC ============
+  const getPaginatedData = (data, currentPage) => {
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    return data.slice(indexOfFirstItem, indexOfLastItem);
+  };
+
+  const getTotalPages = (dataLength) => {
+    return Math.ceil(dataLength / itemsPerPage);
+  };
+
+  const Pagination = ({ currentPage, totalPages, onPageChange }) => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+
+    return (
+      <div className="pagination">
+        <button 
+          onClick={() => onPageChange(currentPage - 1)} 
+          disabled={currentPage === 1}
+          className="pagination-btn"
+        >
+          ◀ Trước
+        </button>
+        {pages.map(page => (
+          <button
+            key={page}
+            onClick={() => onPageChange(page)}
+            className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+          >
+            {page}
+          </button>
+        ))}
+        <button 
+          onClick={() => onPageChange(currentPage + 1)} 
+          disabled={currentPage === totalPages}
+          className="pagination-btn"
+        >
+          Sau ▶
+        </button>
+      </div>
+    );
+  };
 
   // ============ USER CRUD FUNCTIONS ============
   const handleAddUser = () => {
@@ -527,47 +579,54 @@ const AdminPage = () => {
                   {users.length === 0 ? (
                     <p className="no-users">Chưa có người dùng nào trong hệ thống</p>
                   ) : (
-                    <table className="users-table">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Tên</th>
-                          <th>Username</th>
-                          <th>Email</th>
-                          <th>Role</th>
-                          <th>Ngày tạo</th>
-                          <th>Thao tác</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {users.map((user) => (
-                          <tr key={user._id}>
-                            <td>{user._id}</td>
-                            <td>{user.name || 'N/A'}</td>
-                            <td>{user.username}</td>
-                            <td>{user.email}</td>
-                            <td>
-                              <span className={`role-badge ${user.role || 'user'}`}>
-                                {user.role === 'admin' ? '👑 Admin' : '👤 User'}
-                              </span>
-                            </td>
-                            <td>
-                              {new Date(user.createdAt).toLocaleString('vi-VN')}
-                            </td>
-                            <td>
-                              <div className="action-buttons">
-                                <button onClick={() => handleEditUser(user)} className="edit-btn" title="Sửa">
-                                  ✏️
-                                </button>
-                                <button onClick={() => handleDeleteUser(user._id)} className="delete-btn" title="Xóa">
-                                  🗑️
-                                </button>
-                              </div>
-                            </td>
+                    <>
+                      <table className="users-table">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Tên</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Ngày tạo</th>
+                            <th>Thao tác</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {getPaginatedData(users, currentUserPage).map((user) => (
+                            <tr key={user._id}>
+                              <td>{user._id}</td>
+                              <td>{user.name || 'N/A'}</td>
+                              <td>{user.username}</td>
+                              <td>{user.email}</td>
+                              <td>
+                                <span className={`role-badge ${user.role || 'user'}`}>
+                                  {user.role === 'admin' ? '👑 Admin' : '👤 User'}
+                                </span>
+                              </td>
+                              <td>
+                                {new Date(user.createdAt).toLocaleString('vi-VN')}
+                              </td>
+                              <td>
+                                <div className="action-buttons">
+                                  <button onClick={() => handleEditUser(user)} className="edit-btn" title="Sửa">
+                                    ✏️
+                                  </button>
+                                  <button onClick={() => handleDeleteUser(user._id)} className="delete-btn" title="Xóa">
+                                    🗑️
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <Pagination 
+                        currentPage={currentUserPage} 
+                        totalPages={getTotalPages(users.length)} 
+                        onPageChange={setCurrentUserPage} 
+                      />
+                    </>
                   )}
                 </div>
               )}
@@ -601,34 +660,41 @@ const AdminPage = () => {
               )}
 
               {!loading && !error && posts.length > 0 && (
-                <div className="posts-grid">
-                  {posts.map((post) => (
-                    <div key={post._id} className="post-card">
-                      {post.imageUrl && (
-                        <div className="post-image">
-                          <img src={post.imageUrl} alt={post.title} />
-                        </div>
-                      )}
-                      <div className="post-content">
-                        <h3 className="post-title">{post.title}</h3>
-                        <p className="post-text">{post.content}</p>
-                        <div className="post-footer">
-                          <span className="post-date">
-                            📅 {new Date(post.createdAt).toLocaleDateString('vi-VN')}
-                          </span>
-                          <div className="action-buttons">
-                            <button onClick={() => handleEditPost(post)} className="edit-btn" title="Sửa">
-                              ✏️
-                            </button>
-                            <button onClick={() => handleDeletePost(post._id)} className="delete-btn" title="Xóa">
-                              🗑️
-                            </button>
+                <>
+                  <div className="posts-grid">
+                    {getPaginatedData(posts, currentPostPage).map((post) => (
+                      <div key={post._id} className="post-card">
+                        {post.imageUrl && (
+                          <div className="post-image">
+                            <img src={post.imageUrl} alt={post.title} />
+                          </div>
+                        )}
+                        <div className="post-content">
+                          <h3 className="post-title">{post.title}</h3>
+                          <p className="post-text">{post.content}</p>
+                          <div className="post-footer">
+                            <span className="post-date">
+                              📅 {new Date(post.createdAt).toLocaleDateString('vi-VN')}
+                            </span>
+                            <div className="action-buttons">
+                              <button onClick={() => handleEditPost(post)} className="edit-btn" title="Sửa">
+                                ✏️
+                              </button>
+                              <button onClick={() => handleDeletePost(post._id)} className="delete-btn" title="Xóa">
+                                🗑️
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                  <Pagination 
+                    currentPage={currentPostPage} 
+                    totalPages={getTotalPages(posts.length)} 
+                    onPageChange={setCurrentPostPage} 
+                  />
+                </>
               )}
             </div>
           )}
@@ -656,32 +722,39 @@ const AdminPage = () => {
                 <p className="no-users">Chưa có dịch vụ nào trong hệ thống</p>
               )}
               {!loading && !error && services.length > 0 && (
-                <div className="services-grid">
-                  {services.map((service) => (
-                    <div key={service._id} className="service-card">
-                      <div className="service-header">
-                        <div className="service-icon">
-                          <i className={service.icon}></i>
+                <>
+                  <div className="services-grid">
+                    {getPaginatedData(services, currentServicePage).map((service) => (
+                      <div key={service._id} className="service-card">
+                        <div className="service-header">
+                          <div className="service-icon">
+                            <i className={service.icon}></i>
+                          </div>
+                          <h3 className="service-title">{service.title}</h3>
                         </div>
-                        <h3 className="service-title">{service.title}</h3>
+                        <p className="service-content">{service.content}</p>
+                        <ul className="service-description">
+                          {service.description.map((desc, index) => (
+                            <li key={index}>{desc}</li>
+                          ))}
+                        </ul>
+                        <div className="card-actions">
+                          <button onClick={() => handleEditService(service)} className="edit-btn" title="Sửa">
+                            ✏️ Sửa
+                          </button>
+                          <button onClick={() => handleDeleteService(service._id)} className="delete-btn" title="Xóa">
+                            🗑️ Xóa
+                          </button>
+                        </div>
                       </div>
-                      <p className="service-content">{service.content}</p>
-                      <ul className="service-description">
-                        {service.description.map((desc, index) => (
-                          <li key={index}>{desc}</li>
-                        ))}
-                      </ul>
-                      <div className="card-actions">
-                        <button onClick={() => handleEditService(service)} className="edit-btn" title="Sửa">
-                          ✏️ Sửa
-                        </button>
-                        <button onClick={() => handleDeleteService(service._id)} className="delete-btn" title="Xóa">
-                          🗑️ Xóa
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                  <Pagination 
+                    currentPage={currentServicePage} 
+                    totalPages={getTotalPages(services.length)} 
+                    onPageChange={setCurrentServicePage} 
+                  />
+                </>
               )}
 
             </div>

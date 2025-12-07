@@ -1,10 +1,13 @@
 import User from '../model/user.model.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 export const createUser = async (req, res) => {
   try {
     const { name, username, email, password, role } = req.body;
-    const newUser = new User({ name, username, email, password, role });
+    // Hash password trước khi lưu
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ name, username, email, password: hashedPassword, role });
     await newUser.save();
     res.status(201).json(newUser);
   } catch (error) {
@@ -30,7 +33,8 @@ export const updateUserById = async (req, res) => {
     const { name, username, email, password, role } = req.body;
     const updateData = { name, username, email, role };
     if (password) {
-      updateData.password = password;
+      // Hash password mới trước khi update
+      updateData.password = await bcrypt.hash(password, 10);
     }
     const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
     res.status(200).json(updatedUser);
@@ -55,8 +59,10 @@ const SECRET_KEY = process.env.SECRET_KEY || 'your-secret-key-here';
 export const loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username, password });
-    if (user) {
+    const user = await User.findOne({ username });
+    
+    // Kiểm tra user tồn tại và verify password
+    if (user && await bcrypt.compare(password, user.password)) {
       // Tạo JWT token
       const payload = { 
         userId: user._id,

@@ -5,10 +5,60 @@ export const ServicePage = () => {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
 
     useEffect(() => {
         fetchServices();
     }, []);
+
+    const getPaginatedData = (data) => {
+        const indexOfLastItem = currentPage * itemsPerPage;
+        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+        return data.slice(indexOfFirstItem, indexOfLastItem);
+    };
+
+    const getTotalPages = () => {
+        return Math.ceil(services.length / itemsPerPage);
+    };
+
+    const Pagination = () => {
+        const totalPages = getTotalPages();
+        const pages = [];
+        for (let i = 1; i <= totalPages; i++) {
+            pages.push(i);
+        }
+
+        if (totalPages <= 1) return null;
+
+        return (
+            <div className="pagination">
+                <button 
+                    onClick={() => setCurrentPage(currentPage - 1)} 
+                    disabled={currentPage === 1}
+                    className="pagination-btn"
+                >
+                    ◀ Trước
+                </button>
+                {pages.map(page => (
+                    <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`pagination-btn ${currentPage === page ? 'active' : ''}`}
+                    >
+                        {page}
+                    </button>
+                ))}
+                <button 
+                    onClick={() => setCurrentPage(currentPage + 1)} 
+                    disabled={currentPage === totalPages}
+                    className="pagination-btn"
+                >
+                    Sau ▶
+                </button>
+            </div>
+        );
+    };
 
     const fetchServices = async () => {
         setLoading(true);
@@ -61,27 +111,30 @@ export const ServicePage = () => {
                 )}
 
                 {!loading && !error && services.length > 0 && (
-                    <div className="services-grid">
-                        {services.map((service) => (
-                            <div key={service._id} className="service-card">
-                                <div className="service-icon-wrapper">
-                                    <i className={service.icon}></i>
+                    <>
+                        <div className="services-grid">
+                            {getPaginatedData(services).map((service) => (
+                                <div key={service._id} className="service-card">
+                                    <div className="service-icon-wrapper">
+                                        <i className={service.icon}></i>
+                                    </div>
+                                    <h3 className="service-title">{service.title}</h3>
+                                    <p className="service-content">{service.content}</p>
+                                    {service.description && service.description.length > 0 && (
+                                        <ul className="service-features">
+                                            {service.description.map((desc, index) => (
+                                                <li key={index}>
+                                                    <i className="fa-solid fa-check"></i>
+                                                    <span>{desc}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
                                 </div>
-                                <h3 className="service-title">{service.title}</h3>
-                                <p className="service-content">{service.content}</p>
-                                {service.description && service.description.length > 0 && (
-                                    <ul className="service-features">
-                                        {service.description.map((desc, index) => (
-                                            <li key={index}>
-                                                <i className="fa-solid fa-check"></i>
-                                                <span>{desc}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                        <Pagination />
+                    </>
                 )}
             </div>
 

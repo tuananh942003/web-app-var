@@ -25,7 +25,7 @@ export const RegisterModal = ({isOpen, onClose, openModalLogin}) => {
         }
 
         try {
-            const response = await fetch('http://localhost:3001/api/users', {
+            const response = await fetch('http://localhost:3001/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...formData, role: 'user' }),
