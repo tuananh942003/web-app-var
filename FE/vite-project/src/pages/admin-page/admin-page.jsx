@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./admin-page.css";
+import "./admin-page-enhance.css";
 import API_URL from "../../config/api.js";
 
 const AdminPage = () => {
@@ -30,6 +31,7 @@ const AdminPage = () => {
   const [postForm, setPostForm] = useState({ title: '', content: '', imageUrl: '' });
   const [serviceForm, setServiceForm] = useState({ icon: '', title: '', content: '', description: [] });
   const [showPassword, setShowPassword] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Kiểm tra xem đã login chưa khi component mount
   useEffect(() => {
@@ -491,34 +493,53 @@ const AdminPage = () => {
       </div>
 
       <div className="admin-layout">
+        {/* Hamburger Button */}
+        <button 
+          className="hamburger-btn" 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger-line ${isMobileMenuOpen ? 'open' : ''}`}></span>
+        </button>
+
         {/* Sidebar Menu */}
-        <div className="sidebar-menu">
-          <div className="menu-item" onClick={() => setActiveMenu('dashboard')}>
+        <div className={`sidebar-menu ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+          <div className="menu-item" onClick={() => { setActiveMenu('dashboard'); setIsMobileMenuOpen(false); }}>
             <span className={`menu-link ${activeMenu === 'dashboard' ? 'active' : ''}`}>
               📊 Dashboard
             </span>
           </div>
-          <div className="menu-item" onClick={() => setActiveMenu('posts')}>
+          <div className="menu-item" onClick={() => { setActiveMenu('posts'); setIsMobileMenuOpen(false); }}>
             <span className={`menu-link ${activeMenu === 'posts' ? 'active' : ''}`}>
               📝 Quản lý bài viết
             </span>
           </div>
-          <div className="menu-item" onClick={() => setActiveMenu('users')}>
+          <div className="menu-item" onClick={() => { setActiveMenu('users'); setIsMobileMenuOpen(false); }}>
             <span className={`menu-link ${activeMenu === 'users' ? 'active' : ''}`}>
               👥 Quản lý người dùng
             </span>
           </div>
-          <div className="menu-item" onClick={() => setActiveMenu('services')}>
+          <div className="menu-item" onClick={() => { setActiveMenu('services'); setIsMobileMenuOpen(false); }}>
             <span className={`menu-link ${activeMenu === 'services' ? 'active' : ''}`}>
               🛠️ Quản lý dịch vụ
             </span>
           </div>
-          <div className="menu-item" onClick={() => setActiveMenu('settings')}>
+          <div className="menu-item" onClick={() => { setActiveMenu('settings'); setIsMobileMenuOpen(false); }}>
             <span className={`menu-link ${activeMenu === 'settings' ? 'active' : ''}`}>
               ⚙️ Cài đặt
             </span>
           </div>
         </div>
+
+        {/* Mobile Overlay */}
+        {isMobileMenuOpen && (
+          <div 
+            className="mobile-overlay" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          ></div>
+        )}
 
         {/* Main Content */}
         <div className="main-content">
@@ -581,47 +602,49 @@ const AdminPage = () => {
                     <p className="no-users">Chưa có người dùng nào trong hệ thống</p>
                   ) : (
                     <>
-                      <table className="users-table">
-                        <thead>
-                          <tr>
-                            <th>ID</th>
-                            <th>Tên</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Ngày tạo</th>
-                            <th>Thao tác</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {getPaginatedData(users, currentUserPage).map((user) => (
-                            <tr key={user._id}>
-                              <td>{user._id}</td>
-                              <td>{user.name || 'N/A'}</td>
-                              <td>{user.username}</td>
-                              <td>{user.email}</td>
-                              <td>
-                                <span className={`role-badge ${user.role || 'user'}`}>
-                                  {user.role === 'admin' ? '👑 Admin' : '👤 User'}
-                                </span>
-                              </td>
-                              <td>
-                                {new Date(user.createdAt).toLocaleString('vi-VN')}
-                              </td>
-                              <td>
-                                <div className="action-buttons">
-                                  <button onClick={() => handleEditUser(user)} className="edit-btn" title="Sửa">
-                                    ✏️
-                                  </button>
-                                  <button onClick={() => handleDeleteUser(user._id)} className="delete-btn" title="Xóa">
-                                    🗑️
-                                  </button>
-                                </div>
-                              </td>
+                      <div className="table-container">
+                        <table className="users-table">
+                          <thead>
+                            <tr>
+                              <th>ID</th>
+                              <th>Tên</th>
+                              <th>Username</th>
+                              <th>Email</th>
+                              <th>Role</th>
+                              <th>Ngày tạo</th>
+                              <th>Thao tác</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {getPaginatedData(users, currentUserPage).map((user) => (
+                              <tr key={user._id}>
+                                <td>{user._id}</td>
+                                <td>{user.name || 'N/A'}</td>
+                                <td>{user.username}</td>
+                                <td>{user.email}</td>
+                                <td>
+                                  <span className={`role-badge ${user.role || 'user'}`}>
+                                    {user.role === 'admin' ? '👑 Admin' : '👤 User'}
+                                  </span>
+                                </td>
+                                <td>
+                                  {new Date(user.createdAt).toLocaleString('vi-VN')}
+                                </td>
+                                <td>
+                                  <div className="action-buttons">
+                                    <button onClick={() => handleEditUser(user)} className="edit-btn" title="Sửa">
+                                      ✏️
+                                    </button>
+                                    <button onClick={() => handleDeleteUser(user._id)} className="delete-btn" title="Xóa">
+                                      🗑️
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                       <Pagination 
                         currentPage={currentUserPage} 
                         totalPages={getTotalPages(users.length)} 

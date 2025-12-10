@@ -199,8 +199,8 @@
     .navbar {
         flex-direction: column;
         height: auto;
-        padding: 15px;
-        gap: 15px;
+        padding: 12px 15px;
+        gap: 12px;
     }
     
     .nav-logo {
@@ -215,13 +215,16 @@
     
     .nav-menu {
         flex-wrap: wrap;
-        gap: 15px;
+        gap: 12px;
         justify-content: center;
         width: 100%;
     }
     
     .nav-menu a {
-        font-size: 13px;
+        font-size: 14px;
+        padding: 8px 12px;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: 8px;
     }
     
     .nav-action {
