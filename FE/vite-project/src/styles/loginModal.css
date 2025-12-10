@@ -175,3 +175,83 @@
     border-left: 4px solid #4caf50;
     font-weight: 500;
 }
+
+/* ============ RESPONSIVE DESIGN ============ */
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 30px 25px;
+        max-width: 400px;
+    }
+    
+    .modal-content h2 {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+    
+    .form-group {
+        margin-bottom: 18px;
+    }
+    
+    .form-group label {
+        font-size: 13px;
+    }
+    
+    .form-group input {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+    
+    .login-button,
+    .signup-button {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 25px 20px;
+    }
+    
+    .modal-content h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+    
+    .modal-close {
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group label {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .form-group input {
+        padding: 10px;
+        font-size: 12px;
+    }
+    
+    .login-button,
+    .signup-button {
+        padding: 11px;
+        font-size: 13px;
+    }
+    
+    .error-message,
+    .success-message {
+        padding: 10px;
+        font-size: 12px;
+    }
+}

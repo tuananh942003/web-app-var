@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './service-page.css';
+import API_URL from '../../config/api.js';
 
 export const ServicePage = () => {
     const [services, setServices] = useState([]);
@@ -65,7 +66,7 @@ export const ServicePage = () => {
         setError(null);
         try {
             console.log('Fetching services from API...');
-            const response = await fetch('http://localhost:3001/api/services');
+            const response = await fetch(`${API_URL}/api/services`);
             console.log('Response status:', response.status);
             if (!response.ok) {
                 throw new Error('Không thể tải dữ liệu dịch vụ');

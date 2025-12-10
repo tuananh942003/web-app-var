@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./admin-page.css";
+import API_URL from "../../config/api.js";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -57,7 +58,7 @@ const AdminPage = () => {
     setLoginError('');
     
     try {
-      const response = await fetch('http://localhost:3001/api/users/login', {
+      const response = await fetch(`${API_URL}/api/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ const AdminPage = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('accessToken');
-      const response = await fetch('http://localhost:3001/api/users', {
+      const response = await fetch(`${API_URL}/api/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -130,7 +131,7 @@ const AdminPage = () => {
       setLoading(true);
       const token = localStorage.getItem('accessToken');
       // Bước 3: Gọi API để lấy dữ liệu bài viết
-      const response = await fetch('http://localhost:3001/api/posts', {
+      const response = await fetch(`${API_URL}/api/posts`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -158,7 +159,7 @@ const AdminPage = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('accessToken');
-      const response = await fetch('http://localhost:3001/api/services', {
+      const response = await fetch(`${API_URL}/api/services`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -251,7 +252,7 @@ const AdminPage = () => {
     
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3001/api/users/${userId}`, {
+      const response = await fetch(`${API_URL}/api/users/${userId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -272,8 +273,8 @@ const AdminPage = () => {
     try {
       const token = localStorage.getItem('accessToken');
       const url = editingItem 
-        ? `http://localhost:3001/api/users/${editingItem._id}`
-        : 'http://localhost:3001/api/users';
+        ? `${API_URL}/api/users/${editingItem._id}`
+        : `${API_URL}/api/users`;
       
       const method = editingItem ? 'PUT' : 'POST';
       
@@ -313,7 +314,7 @@ const AdminPage = () => {
     
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3001/api/posts/${postId}`, {
+      const response = await fetch(`${API_URL}/api/posts/${postId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -334,8 +335,8 @@ const AdminPage = () => {
     try {
       const token = localStorage.getItem('accessToken');
       const url = editingItem 
-        ? `http://localhost:3001/api/posts/${editingItem._id}`
-        : 'http://localhost:3001/api/posts';
+        ? `${API_URL}/api/posts/${editingItem._id}`
+        : `${API_URL}/api/posts`;
       
       const method = editingItem ? 'PUT' : 'POST';
       
@@ -380,7 +381,7 @@ const AdminPage = () => {
     
     try {
       const token = localStorage.getItem('accessToken');
-      const response = await fetch(`http://localhost:3001/api/services/${serviceId}`, {
+      const response = await fetch(`${API_URL}/api/services/${serviceId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -401,8 +402,8 @@ const AdminPage = () => {
     try {
       const token = localStorage.getItem('accessToken');
       const url = editingItem 
-        ? `http://localhost:3001/api/services/${editingItem._id}`
-        : 'http://localhost:3001/api/services';
+        ? `${API_URL}/api/services/${editingItem._id}`
+        : `${API_URL}/api/services`;
       
       const method = editingItem ? 'PUT' : 'POST';
       

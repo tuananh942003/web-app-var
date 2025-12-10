@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import "../styles/loginModal.css"
 import "@fortawesome/fontawesome-free/css/all.css";
+import API_URL from "../config/api.js";
 
 export const RegisterModal = ({isOpen, onClose, openModalLogin}) => {
     const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '', confirmPassword: '' });
@@ -25,7 +26,7 @@ export const RegisterModal = ({isOpen, onClose, openModalLogin}) => {
         }
 
         try {
-            const response = await fetch('http://localhost:3001/api/users/register', {
+            const response = await fetch(`${API_URL}/api/users/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...formData, role: 'user' }),

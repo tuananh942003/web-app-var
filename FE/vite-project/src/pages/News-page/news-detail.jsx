@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './news-detail.css';
+import API_URL from '../../config/api.js';
 import pic1 from '../../images/pic1.png';
 import pic2 from '../../images/pic2.png';
 import pic4 from '../../images/pic4.jpg';
@@ -22,7 +23,7 @@ export const NewsDetail = () => {
     const fetchPostDetail = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3001/api/posts/${id}`);
+            const response = await fetch(`${API_URL}/api/posts/${id}`);
             
             if (!response.ok) {
                 throw new Error('Không thể lấy chi tiết bài viết');

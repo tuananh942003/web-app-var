@@ -171,3 +171,112 @@
 .dropdown-item i {
     font-size: 16px;
 }
+
+/* ============ RESPONSIVE DESIGN ============ */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 10px 15px;
+    }
+    
+    .nav-menu {
+        gap: 20px;
+    }
+    
+    .nav-menu a {
+        font-size: 14px;
+    }
+    
+    .nav-logo img {
+        height: 80px;
+        width: 80px;
+    }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .nav-logo {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .nav-logo img {
+        height: 70px;
+        width: 70px;
+    }
+    
+    .nav-menu {
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .nav-menu a {
+        font-size: 13px;
+    }
+    
+    .nav-action {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .btn-login, .btn-signup {
+        padding: 6px 15px;
+        font-size: 13px;
+    }
+    
+    .welcome-text {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .navbar {
+        padding: 10px;
+    }
+    
+    .nav-logo img {
+        height: 60px;
+        width: 60px;
+    }
+    
+    .nav-menu {
+        gap: 10px;
+    }
+    
+    .nav-menu a {
+        font-size: 12px;
+    }
+    
+    .btn-login, .btn-signup {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+    
+    .welcome-text {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    .dropdown-menu {
+        min-width: 150px;
+    }
+    
+    .dropdown-item {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+}

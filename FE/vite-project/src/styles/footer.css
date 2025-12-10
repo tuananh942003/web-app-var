@@ -71,3 +71,74 @@
     font-size: 14px;
     color: rgba(255, 255, 255,  0.87);
 }
+
+/* ============ RESPONSIVE DESIGN ============ */
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 20px;
+    }
+    
+    .footer-section {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    
+    .footer-section h3 {
+        font-size: 18px;
+    }
+    
+    .footer-section h4 {
+        font-size: 16px;
+    }
+    
+    .footer-section p, 
+    .footer-section a {
+        font-size: 14px;
+    }
+    
+    .social-link {
+        justify-content: center;
+    }
+    
+    .social-link i {
+        font-size: 26px;
+    }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .footer-container {
+        padding: 15px 0;
+    }
+    
+    .footer-content {
+        padding: 15px;
+        gap: 25px;
+    }
+    
+    .footer-section h3 {
+        font-size: 16px;
+    }
+    
+    .footer-section h4 {
+        font-size: 15px;
+    }
+    
+    .footer-section p, 
+    .footer-section a {
+        font-size: 13px;
+    }
+    
+    .social-link i {
+        font-size: 24px;
+    }
+    
+    .footer-bottom {
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './news-page.css';
+import API_URL from '../../config/api.js';
 
 export const NewsPage = () => {
     const navigate = useNavigate();
@@ -67,7 +68,7 @@ export const NewsPage = () => {
     const fetchPosts = async () => {
         try {
             setLoading(true);
-            const response = await fetch('http://localhost:3001/api/posts');
+            const response = await fetch(`${API_URL}/api/posts`);
             
             if (!response.ok) {
                 throw new Error('Không thể lấy dữ liệu bài viết');
