@@ -9,7 +9,7 @@ import "@fortawesome/fontawesome-free/css/all.css";
 import HomePage from "./pages/Home-page/home-page.jsx";
 import About from "./pages/About-page/about.jsx";
 import { Contact } from "./component/contact.jsx";
-import AdminPage from "./component/admin-page.jsx";
+import AdminPage from "./pages/admin-page/admin-page.jsx";
 import ServicePage from "./pages/Service-page/service-page.jsx";
 import NewsPage from "./pages/News-page/news-page.jsx";
 import NewsDetail from "./pages/News-page/news-detail.jsx";

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../styles/admin-page.css";
+import "./admin-page.css";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
