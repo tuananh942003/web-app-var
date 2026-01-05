@@ -1,8 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react'
 import logo from "../images/computerscience-scaled.jpg"
 import "../styles/contact.css"
 import "@fortawesome/fontawesome-free/css/all.css";
+import API_URL from '../config/api.js';
 export const Contact = () => {
+    const [form, setForm] = useState({ full_name: '', email: '', phone: '', company: '', subject: '', message: '' });
+    const [sending, setSending] = useState(false);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (sending) return;
+        setSending(true);
+        try {
+            const res = await fetch(`${API_URL}/api/contacts`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form),
+            });
+            if (res.ok) {
+                alert('Gửi liên hệ thành công!');
+                setForm({ full_name: '', email: '', phone: '', company: '', subject: '', message: '' });
+            } else {
+                const data = await res.json();
+                alert(data.message || 'Gửi thất bại');
+            }
+        } catch (err) {
+            console.error('Submit contact error', err);
+            alert('Lỗi kết nối đến server');
+        } finally {
+            setSending(false);
+        }
+    };
   return (
     <div className='container-contact'>
         <div className='contact-header'>
@@ -48,30 +81,30 @@ export const Contact = () => {
                     </div>
                 </div>
             </div>
-            <div className='contact-form'>
+            <form className='contact-form' onSubmit={handleSubmit}>
                 <div className="contact-form-input">
-                    <input type="text" name='full_name' placeholder='Họ và tên'/>
+                    <input value={form.full_name} onChange={handleChange} type="text" name='full_name' placeholder='Họ và tên' required />
                 </div>
                 <div className="contact-form-input">
-                    <input type="email" name='email' placeholder='Email'/>
+                    <input value={form.email} onChange={handleChange} type="email" name='email' placeholder='Email' required />
                 </div>
                 <div className="contact-form-input">
-                    <input type="tel" name='phone' placeholder='Số điện thoại' />
+                    <input value={form.phone} onChange={handleChange} type="tel" name='phone' placeholder='Số điện thoại' />
                 </div>
                 <div className="contact-form-input">
-                    <input type="text" name='company' placeholder='Công Ty'/>
+                    <input value={form.company} onChange={handleChange} type="text" name='company' placeholder='Công Ty' />
                 </div>
                 <div className="contact-form-input">
-                   <input type="text" name='subject' placeholder='Tiêu đề' />
+                   <input value={form.subject} onChange={handleChange} type="text" name='subject' placeholder='Tiêu đề' />
                 </div>
                 <div className="contact-form-input">
-                    <textarea name="message" rows="5" placeholder='Nội dung'></textarea>
+                    <textarea value={form.message} onChange={handleChange} name="message" rows="5" placeholder='Nội dung' required></textarea>
                 </div>
-                <button type='submit' className='btn-submit' >
+                <button type='submit' className='btn-submit' disabled={sending}>
                     <i className="fas fa-paper-plane"></i>
-                    Gửi tin nhắn
+                    {sending ? 'Đang gửi...' : 'Gửi tin nhắn'}
                 </button>
-        </div>
+            </form>
         </div>
         
     </div>

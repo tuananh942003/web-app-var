@@ -13,6 +13,7 @@ const AdminPage = () => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const [posts, setPosts] = useState([]);
   const [services, setServices] = useState([]);
+  const [contacts, setContacts] = useState([]);
 
   // Pagination states
   const [currentUserPage, setCurrentUserPage] = useState(1);
@@ -188,6 +189,35 @@ const AdminPage = () => {
 
   useEffect(() => {
     fetchServices();
+  }, []);
+
+  const fetchContacts = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`${API_URL}/api/contacts`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Không thể lấy danh sách liên hệ');
+      }
+
+      const data = await response.json();
+      setContacts(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      console.error('Lỗi khi lấy liên hệ:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchContacts();
   }, []);
 
   // ============ PAGINATION LOGIC ============
@@ -526,6 +556,11 @@ const AdminPage = () => {
               🛠️ Quản lý dịch vụ
             </span>
           </div>
+          <div className="menu-item" onClick={() => { setActiveMenu('contacts'); setIsMobileMenuOpen(false); }}>
+            <span className={`menu-link ${activeMenu === 'contacts' ? 'active' : ''}`}>
+              ✉️ Liên hệ
+            </span>
+          </div>
           <div className="menu-item" onClick={() => { setActiveMenu('settings'); setIsMobileMenuOpen(false); }}>
             <span className={`menu-link ${activeMenu === 'settings' ? 'active' : ''}`}>
               ⚙️ Cài đặt
@@ -568,7 +603,53 @@ const AdminPage = () => {
                     <p>Tổng dịch vụ</p>
                   </div>
                 </div>
+                <div className="stat-card">
+                  <div className="stat-icon">✉️</div>
+                  <div className="stat-info">
+                    <h3>{contacts.length}</h3>
+                    <p>Tổng liên hệ</p>
+                  </div>
+                </div>
               </div>
+            </div>
+          )}
+
+          {activeMenu === 'contacts' && (
+            <div className="content-section">
+              <h2 className="section-title-admin">✉️ Danh sách liên hệ</h2>
+              {loading && <p className="loading-text">⏳ Đang tải dữ liệu...</p>}
+              {error && <div className="error-message">❌ Lỗi: {error}</div>}
+              {!loading && !error && contacts.length === 0 && (
+                <p className="no-users">Chưa có liên hệ nào</p>
+              )}
+              {!loading && !error && contacts.length > 0 && (
+                <div className="table-container">
+                  <table className="users-table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Tên</th>
+                        <th>Email</th>
+                        <th>Tiêu đề</th>
+                        <th>Nội dung</th>
+                        <th>Ngày</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {contacts.map((c) => (
+                        <tr key={c._id}>
+                          <td>{c._id}</td>
+                          <td>{c.full_name}</td>
+                          <td>{c.email}</td>
+                          <td>{c.subject || 'N/A'}</td>
+                          <td>{c.message}</td>
+                          <td>{new Date(c.createdAt).toLocaleString('vi-VN')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
 
