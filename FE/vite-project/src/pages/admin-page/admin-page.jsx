@@ -543,7 +543,7 @@ const AdminPage = () => {
           </div>
           <div className="menu-item" onClick={() => { setActiveMenu('posts'); setIsMobileMenuOpen(false); }}>
             <span className={`menu-link ${activeMenu === 'posts' ? 'active' : ''}`}>
-              📝 Quản lý bài viết
+              📝 Quản lý số lượng bài viết
             </span>
           </div>
           <div className="menu-item" onClick={() => { setActiveMenu('users'); setIsMobileMenuOpen(false); }}>
