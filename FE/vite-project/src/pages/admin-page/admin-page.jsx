@@ -741,7 +741,7 @@ const AdminPage = () => {
           {activeMenu === 'posts' && (
             <div className="content-section">
               <div className="users-header posts-header">
-                <h2 className="section-title-admin">📝 Quản lý bài viết</h2>
+                <h2 className="section-title-admin">📝 Quản lý số lượng bài viết</h2>
                 <div className="header-actions">
                   <button onClick={handleAddPost} className="add-button">
                     ➕ Thêm bài viết
