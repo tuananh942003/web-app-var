@@ -324,3 +324,126 @@
     .section-image { height: 190px; }
     .detail-title { font-size: 24px; }
 }
+
+/* ---------- Stats Grid ---------- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+}
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 20px 12px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    text-align: center;
+}
+.stat-card-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111;
+    line-height: 1;
+}
+.stat-card-label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+}
+
+/* ---------- Pull Quote ---------- */
+.pull-quote {
+    margin: 8px 0;
+    padding: 28px 36px;
+    border-left: 3px solid #111;
+    background: #fafafa;
+    border-radius: 0 6px 6px 0;
+}
+.pull-quote p {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+    line-height: 1.7;
+    font-style: italic;
+    margin: 0 0 12px;
+}
+.pull-quote cite {
+    font-size: 13px;
+    color: #888;
+    font-style: normal;
+    font-weight: 600;
+}
+
+/* ---------- Side Image (left / right) ---------- */
+.section-side .side-wrap {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    margin-top: 16px;
+}
+.section-side.left  .side-wrap { flex-direction: row; }
+.section-side.right .side-wrap { flex-direction: row-reverse; }
+.side-img {
+    width: 240px;
+    flex-shrink: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+.side-img img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+}
+
+/* ---------- Numbered Lead ---------- */
+.section-numbered-lead { position: relative; }
+.number-badge {
+    display: inline-block;
+    font-size: 52px;
+    font-weight: 900;
+    color: #e5e7eb;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -2px;
+}
+
+/* ---------- Bullet & Ordered Lists ---------- */
+.article-bullets,
+.article-numbered {
+    padding-left: 22px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.article-bullets li,
+.article-numbered li {
+    font-size: 15.5px;
+    color: #444;
+    line-height: 1.75;
+    padding-left: 4px;
+}
+.article-bullets li::marker  { color: #bbb; }
+.article-numbered li::marker { color: #111; font-weight: 700; }
+
+/* ---------- Responsive for new blocks ---------- */
+@media (max-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .section-side .side-wrap { flex-direction: column !important; }
+    .side-img { width: 100%; }
+    .side-img img { height: 200px; }
+    .pull-quote { padding: 20px 22px; }
+    .pull-quote p { font-size: 16px; }
+}
+@media (max-width: 480px) {
+    .stats-grid { gap: 10px; }
+    .stat-card { padding: 14px 10px; }
+    .stat-card-value { font-size: 22px; }
+    .number-badge { font-size: 36px; }
+}
