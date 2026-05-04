@@ -1,47 +1,108 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./about.css";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { useLang } from "../../context/LanguageContext.jsx";
+
+/* Animated counter */
+function useCountUp(target, duration = 2000) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const started = useRef(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          let start = 0;
+          const step = Math.ceil(target / (duration / 16));
+          const tick = () => {
+            start += step;
+            if (start >= target) { setCount(target); return; }
+            setCount(start);
+            requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [target, duration]);
+  return [count, ref];
+}
+
+function StatCounter({ icon, value, suffix, label }) {
+  const [count, ref] = useCountUp(value);
+  return (
+    <div className="about-counter-card" ref={ref}>
+      <div className="counter-icon"><i className={icon}></i></div>
+      <div className="counter-value">{count}<span>{suffix}</span></div>
+      <div className="counter-label">{label}</div>
+    </div>
+  );
+}
 
 export const About = () => {
+  const observerRef = useRef(null);
+  const { t } = useLang();
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+            observerRef.current.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    document.querySelectorAll("[data-reveal]").forEach((el) => {
+      observerRef.current.observe(el);
+    });
+    return () => observerRef.current?.disconnect();
+  }, []);
   const visionMissionData = [
     {
       icon: "fas fa-eye",
-      title: "Tầm Nhìn",
-      description: "Trở thành đơn vị tư vấn đấu thầu hàng đầu Việt Nam, mang đến giải pháp toàn diện và hiệu quả nhất cho doanh nghiệp. Chúng tôi hướng tới việc xây dựng một hệ sinh thái dịch vụ chuyên nghiệp, minh bạch và đáng tin cậy."
+      title: t('about.visionTitle'),
+      description: t('about.visionDesc')
     },
     {
       icon: "fas fa-rocket",
-      title: "Sứ Mệnh",
-      description: "Đồng hành cùng doanh nghiệp trong mọi giai đoạn đấu thầu, từ tư vấn chiến lược đến hoàn thiện hồ sơ. Cam kết mang lại giá trị bền vững, tối ưu chi phí và nâng cao tỷ lệ trúng thầu cho khách hàng."
+      title: t('about.missionTitle'),
+      description: t('about.missionDesc')
     },
     {
       icon: "fas fa-heart",
-      title: "Giá Trị Cốt Lõi",
-      description: "Chuyên nghiệp - Uy tín - Hiệu quả. Chúng tôi đặt lợi ích khách hàng lên hàng đầu, luôn cập nhật quy định pháp luật mới nhất và áp dụng công nghệ hiện đại vào quy trình làm việc."
+      title: t('about.coreValuesTitle'),
+      description: t('about.coreValuesDesc')
     }
   ];
 
   const expertTeam = [
     {
-      name: "Nguyễn Văn A",
-      position: "Giám Đốc Tư Vấn",
+      name: t('about.expert1Name'),
+      position: t('about.expert1Position'),
       avatar: "fas fa-user-tie",
-      description: "15 năm kinh nghiệm trong lĩnh vực đấu thầu, chuyên gia tư vấn cho hơn 500 dự án thành công.",
-      expertise: "Tư vấn chiến lược, Quản lý dự án"
+      description: t('about.expert1Desc'),
+      expertise: `${t('about.expert1Skill1')}, ${t('about.expert1Skill2')}, ${t('about.expert1Skill3')}`
     },
     {
-      name: "Trần Thị B",
-      position: "Chuyên Gia Pháp Lý",
+      name: t('about.expert2Name'),
+      position: t('about.expert2Position'),
       avatar: "fas fa-gavel",
-      description: "Chuyên gia về luật đấu thầu với 12 năm kinh nghiệm, đảm bảo mọi hồ sơ tuân thủ pháp luật.",
-      expertise: "Luật đấu thầu, Hồ sơ pháp lý"
+      description: t('about.expert2Desc'),
+      expertise: `${t('about.expert2Skill1')}, ${t('about.expert2Skill2')}, ${t('about.expert2Skill3')}`
     },
     {
-      name: "Lê Văn C",
-      position: "Chuyên Gia Kỹ Thuật",
+      name: t('about.expert3Name'),
+      position: t('about.expert3Position'),
       avatar: "fas fa-chart-line",
-      description: "10 năm kinh nghiệm phân tích kỹ thuật, đánh giá dự án và lập phương án kỹ thuật tối ưu.",
-      expertise: "Phân tích kỹ thuật, Định giá"
+      description: t('about.expert3Desc'),
+      expertise: `${t('about.expert3Skill1')}, ${t('about.expert3Skill2')}, ${t('about.expert3Skill3')}`
     }
   ];
 
@@ -50,14 +111,14 @@ export const About = () => {
       {/* Header Section */}
       <section className="about-header">
         <div className="header-content">
-          <h1 className="main-title">Về Chúng Tôi</h1>
-          <p className="subtitle">Đối tác tin cậy trong lĩnh vực tư vấn đấu thầu</p>
+          <h1 className="main-title">{t('about.heroTitle')}</h1>
+          <p className="subtitle">{t('about.heroSubtitle')}</p>
         </div>
       </section>
 
       {/* Về Chúng Tôi Section */}
       <section className="about-intro">
-        <div className="intro-container">
+        <div className="intro-container" data-reveal>
           <div className="intro-content">
             <h2 className="section-title">
               <i className="fas fa-building"></i>
@@ -88,11 +149,12 @@ export const About = () => {
         <div className="section-container">
           <h2 className="section-title">
             <i className="fas fa-compass"></i>
-            Tầm Nhìn & Sứ Mệnh
+            {t('about.sectionVision')}
           </h2>
-          <div className="vision-grid">
+          <div className="vision-grid" data-reveal>
             {visionMissionData.map((item, index) => (
               <div key={index} className="vision-card">
+                <div className="vision-card-number">0{index + 1}</div>
                 <div className="card-icon">
                   <i className={item.icon}></i>
                 </div>
@@ -104,17 +166,29 @@ export const About = () => {
         </div>
       </section>
 
+      {/* Counter Section */}
+      <section className="about-counters">
+        <div className="section-container">
+          <div className="counters-grid" data-reveal>
+            <StatCounter icon="fas fa-briefcase" value={500} suffix="+" label={t('about.counterProjects')} />
+            <StatCounter icon="fas fa-users" value={200} suffix="+" label={t('about.counterClients')} />
+            <StatCounter icon="fas fa-trophy" value={85} suffix="%" label={t('about.counterWinRate')} />
+            <StatCounter icon="fas fa-clock" value={12} suffix="+" label={t('about.counterExperience')} />
+          </div>
+        </div>
+      </section>
+
       {/* Đội Ngũ Chuyên Gia Section */}
       <section className="expert-team">
         <div className="section-container">
           <h2 className="section-title">
             <i className="fas fa-users"></i>
-            Đội Ngũ Chuyên Gia
+            {t('about.sectionTeam')}
           </h2>
           <p className="section-subtitle">
-            Đội ngũ chuyên gia giàu kinh nghiệm, tận tâm và chuyên nghiệp
+            {t('about.teamSubtitle')}
           </p>
-          <div className="expert-grid">
+          <div className="expert-grid" data-reveal>
             {expertTeam.map((expert, index) => (
               <div key={index} className="expert-card">
                 <div className="expert-avatar">
@@ -125,7 +199,7 @@ export const About = () => {
                   <p className="expert-position">{expert.position}</p>
                   <p className="expert-description">{expert.description}</p>
                   <div className="expert-expertise">
-                    <span className="expertise-label">Chuyên môn:</span>
+                    <span className="expertise-label">{t('about.expertiseLabel')}</span>
                     <span className="expertise-value">{expert.expertise}</span>
                   </div>
                 </div>

@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import "../styles/loginModal.css"
 import "@fortawesome/fontawesome-free/css/all.css";
 import API_URL from "../config/api.js";
+import { useLang } from "../context/LanguageContext.jsx";
 
 export const LoginModal = ({isOpen, onClose, openModalRegister, onLoginSuccess}) => {
+    const { t } = useLang();
     const [formData, setFormData] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -34,10 +36,10 @@ export const LoginModal = ({isOpen, onClose, openModalRegister, onLoginSuccess})
                 onClose();
                 setFormData({ username: '', password: '' });
             } else {
-                setError(data.message || 'Đăng nhập thất bại');
+                setError(data.message || t('login.errorLogin'));
             }
         } catch (err) {
-            setError('Không thể kết nối đến server');
+            setError(t('login.errorConnection'));
             console.error('Login error:', err);
         } finally {
             setLoading(false);
@@ -54,38 +56,38 @@ export const LoginModal = ({isOpen, onClose, openModalRegister, onLoginSuccess})
                 <button className='modal-close' onClick={onClose}>
                     <i className="fas fa-times"></i>
                 </button>
-                <h2>Đăng nhập</h2>
+                <h2>{t('login.title')}</h2>
                 {error && <div className="error-message">{error}</div>}
                 <form className='login-form' onSubmit={handleSubmit}>
                     <div className='form-group'>
-                        <label htmlFor='username'>Tên đăng nhập</label>
+                        <label htmlFor='username'>{t('login.username')}</label>
                         <input 
                             type='text' 
                             id='username' 
                             name='username' 
-                            placeholder='Nhập tên đăng nhập'
+                            placeholder={t('login.usernamePlaceholder')}
                             value={formData.username}
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <div className='form-group'>
-                        <label htmlFor='password'>Mật khẩu</label>
+                        <label htmlFor='password'>{t('login.password')}</label>
                         <input 
                             type='password' 
                             id='password' 
                             name='password' 
-                            placeholder='Nhập mật khẩu'
+                            placeholder={t('login.passwordPlaceholder')}
                             value={formData.password}
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <button type='submit' className='login-button' disabled={loading}>
-                        {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                        {loading ? t('login.logging') : t('login.loginBtn')}
                     </button>
                     <button type='button' className='signup-button' onClick={openModalRegister}>
-                        Đăng ký
+                        {t('login.registerBtn')}
                     </button>
                 </form>
             </div>

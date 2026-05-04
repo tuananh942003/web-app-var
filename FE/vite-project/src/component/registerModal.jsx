@@ -3,8 +3,10 @@ import React, { useState } from 'react';
 import "../styles/loginModal.css"
 import "@fortawesome/fontawesome-free/css/all.css";
 import API_URL from "../config/api.js";
+import { useLang } from "../context/LanguageContext.jsx";
 
 export const RegisterModal = ({isOpen, onClose, openModalLogin}) => {
+    const { t } = useLang();
     const [formData, setFormData] = useState({ name: '', username: '', email: '', password: '', confirmPassword: '' });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
@@ -20,7 +22,7 @@ export const RegisterModal = ({isOpen, onClose, openModalLogin}) => {
 
         // Kiểm tra mật khẩu xác nhận
         if (formData.password !== formData.confirmPassword) {
-            setError('Mật khẩu xác nhận không khớp!');
+            setError(t('register.passwordMismatch'));
             setLoading(false);
             return;
         }
@@ -43,10 +45,10 @@ export const RegisterModal = ({isOpen, onClose, openModalLogin}) => {
                     openModalLogin();
                 }, 2000);
             } else {
-                setError(data.message || 'Đăng ký thất bại');
+                setError(data.message || t('register.errorRegister'));
             }
         } catch (err) {
-            setError('Không thể kết nối đến server');
+            setError(t('register.errorConnection'));
             console.error('Register error:', err);
         } finally {
             setLoading(false);
@@ -63,75 +65,75 @@ export const RegisterModal = ({isOpen, onClose, openModalLogin}) => {
                 <button className='modal-close' onClick={onClose}>
                     <i className="fas fa-times"></i>
                 </button>
-                <h2>Đăng ký</h2>
+                <h2>{t('register.title')}</h2>
                 {error && <div className="error-message">{error}</div>}
-                {success && <div className="success-message">✅ Đăng ký thành công! Đang chuyển sang đăng nhập...</div>}
+                {success && <div className="success-message">✅ {t('register.success')}</div>}
                 <form className='login-form' onSubmit={handleSubmit}>
                     <div className='form-group'>
-                        <label htmlFor='name'>Tên đầy đủ</label>
+                        <label htmlFor='name'>{t('register.fullName')}</label>
                         <input 
                             type='text' 
                             id='name' 
                             name='name' 
-                            placeholder='Nhập tên đầy đủ'
+                            placeholder={t('register.fullNamePlaceholder')}
                             value={formData.name}
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <div className='form-group'>
-                        <label htmlFor='username'>Tên đăng nhập</label>
+                        <label htmlFor='username'>{t('register.username')}</label>
                         <input 
                             type='text' 
                             id='username' 
                             name='username' 
-                            placeholder='Nhập tên đăng nhập'
+                            placeholder={t('register.usernamePlaceholder')}
                             value={formData.username}
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <div className='form-group'>    
-                        <label htmlFor='email'>Email</label>
+                        <label htmlFor='email'>{t('register.email')}</label>
                         <input 
                             type='email' 
                             id='email' 
                             name='email' 
-                            placeholder='Nhập email'
+                            placeholder={t('register.emailPlaceholder')}
                             value={formData.email}
                             onChange={handleChange}
                             required
                         />
                     </div>  
                     <div className='form-group'>
-                        <label htmlFor='password'>Mật khẩu</label>
+                        <label htmlFor='password'>{t('register.password')}</label>
                         <input 
                             type='password' 
                             id='password' 
                             name='password' 
-                            placeholder='Nhập mật khẩu'
+                            placeholder={t('register.passwordPlaceholder')}
                             value={formData.password}
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <div className='form-group'>
-                        <label htmlFor='confirmPassword'>Xác nhận mật khẩu</label>
+                        <label htmlFor='confirmPassword'>{t('register.confirmPassword')}</label>
                         <input 
                             type='password' 
                             id='confirmPassword' 
                             name='confirmPassword' 
-                            placeholder='Nhập lại mật khẩu'
+                            placeholder={t('register.confirmPasswordPlaceholder')}
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             required
                         />
                     </div>
                     <button type='submit' className='login-button' disabled={loading}>
-                        {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+                        {loading ? t('register.registering') : t('register.registerBtn')}
                     </button>
                     <button type='button' className='signup-button' onClick={openModalLogin}>
-                        Đăng nhập
+                        {t('register.loginBtn')}
                     </button>
                 </form> 
             </div>

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import './news-detail.css';
 import API_URL from '../../config/api.js';
+import { useLang } from '../../context/LanguageContext.jsx';
 import pic1 from '../../images/pic1.png';
 import pic2 from '../../images/pic2.png';
 import pic4 from '../../images/pic4.jpg';
@@ -12,13 +13,29 @@ import computerScience from '../../images/computerscience-scaled.jpg';
 export const NewsDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { t, lang } = useLang();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [readProgress, setReadProgress] = useState(0);
+    const articleRef = useRef(null);
 
     useEffect(() => {
         fetchPostDetail();
     }, [id]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!articleRef.current) return;
+            const el = articleRef.current;
+            const rect = el.getBoundingClientRect();
+            const total = el.scrollHeight - window.innerHeight;
+            const scrolled = -rect.top;
+            setReadProgress(Math.min(100, Math.max(0, (scrolled / total) * 100)));
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [post]);
 
     const fetchPostDetail = async () => {
         try {
@@ -42,7 +59,7 @@ export const NewsDetail = () => {
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        return new Date(dateString).toLocaleDateString('vi-VN', options);
+        return new Date(dateString).toLocaleDateString(lang === 'vi' ? 'vi-VN' : 'en-US', options);
     };
 
     // Tạo nội dung chi tiết đẹp cho bài viết
@@ -55,27 +72,27 @@ export const NewsDetail = () => {
             
             sections: [
                 {
-                    title: "Tổng Quan",
+                    title: t('newsDetail.sectionOverview'),
                     content: `Trong thời đại công nghệ 4.0, việc nắm bắt và cập nhật thông tin trở nên vô cùng quan trọng. ${post.title} không chỉ là một chủ đề đơn thuần mà còn là xu hướng được nhiều người quan tâm và theo dõi. Chúng ta cần phải hiểu rõ bản chất của vấn đề để có thể áp dụng hiệu quả vào thực tế.`,
                     image: randomImages[0]
                 },
                 {
-                    title: "Phân Tích Chi Tiết",
+                    title: t('newsDetail.sectionAnalysis'),
                     content: `Qua quá trình nghiên cứu và phân tích, chúng tôi nhận thấy rằng ${post.content.toLowerCase()} có tác động sâu rộng đến nhiều lĩnh vực khác nhau. Điều này đòi hỏi chúng ta phải có cái nhìn đa chiều và tiếp cận vấn đề một cách khoa học, có hệ thống. Mỗi khía cạnh đều mang lại những giá trị và bài học riêng biệt.`,
                     image: randomImages[1]
                 },
                 {
-                    title: "Ứng Dụng Thực Tiễn",
+                    title: t('newsDetail.sectionPractice'),
                     content: `Không chỉ dừng lại ở lý thuyết, chúng ta cần biết cách áp dụng kiến thức vào thực tế. Các chuyên gia trong lĩnh vực này đã chỉ ra rằng việc kết hợp giữa kiến thức nền tảng và kỹ năng thực hành sẽ mang lại hiệu quả cao nhất. Đây chính là chìa khóa để thành công trong thời đại hiện nay.`,
                     image: randomImages[2]
                 },
                 {
-                    title: "Xu Hướng Tương Lai",
+                    title: t('newsDetail.sectionFuture'),
                     content: `Nhìn về tương lai, chúng ta có thể thấy rằng ${post.title.toLowerCase()} sẽ tiếp tục phát triển mạnh mẽ. Các công nghệ mới, phương pháp tiếp cận sáng tạo sẽ không ngừng xuất hiện và tạo ra những cơ hội mới. Việc chuẩn bị và thích nghi với những thay đổi này là điều cần thiết cho mọi cá nhân và tổ chức.`,
                     image: null
                 },
                 {
-                    title: "Kết Luận",
+                    title: t('newsDetail.sectionConclusion'),
                     content: `Tóm lại, ${post.title} là một chủ đề đáng để chúng ta dành thời gian tìm hiểu và nghiên cứu. Hy vọng rằng qua bài viết này, bạn đã có được những thông tin hữu ích và có thể áp dụng vào công việc cũng như cuộc sống của mình. Hãy tiếp tục theo dõi để cập nhật thêm nhiều thông tin bổ ích khác.`,
                     image: null
                 }
@@ -92,7 +109,7 @@ export const NewsDetail = () => {
             <div className="detail-container">
                 <div className="loading">
                     <i className="fas fa-spinner fa-spin"></i>
-                    <p>Đang tải bài viết...</p>
+                    <p>{t('newsDetail.loading')}</p>
                 </div>
             </div>
         );
@@ -103,10 +120,10 @@ export const NewsDetail = () => {
             <div className="detail-container">
                 <div className="error">
                     <i className="fas fa-exclamation-circle"></i>
-                    <p>{error || 'Không tìm thấy bài viết'}</p>
+                    <p>{error || t('newsDetail.notFound')}</p>
                     <button className="back-btn" onClick={handleBack}>
                         <i className="fas fa-arrow-left"></i>
-                        Quay lại
+                        {t('newsDetail.back')}
                     </button>
                 </div>
             </div>
@@ -116,11 +133,23 @@ export const NewsDetail = () => {
     const detailedContent = generateDetailedContent(post);
 
     return (
-        <div className="detail-container">
+        <div className="detail-container" ref={articleRef}>
+            {/* Reading progress bar */}
+            <div className="reading-progress" style={{ width: `${readProgress}%` }}></div>
+
             <div className="detail-wrapper">
+                {/* Breadcrumb */}
+                <nav className="detail-breadcrumb">
+                    <Link to="/">{t('newsDetail.home')}</Link>
+                    <i className="fas fa-chevron-right"></i>
+                    <Link to="/news">{t('newsDetail.news')}</Link>
+                    <i className="fas fa-chevron-right"></i>
+                    <span>{t('newsDetail.detail')}</span>
+                </nav>
+
                 <button className="back-btn" onClick={handleBack}>
                     <i className="fas fa-arrow-left"></i>
-                    Quay lại danh sách
+                    {t('newsDetail.backToList')}
                 </button>
 
                 <article className="post-detail">
@@ -131,6 +160,10 @@ export const NewsDetail = () => {
                                 <i className="fas fa-calendar-alt"></i>
                                 {formatDate(post.createdAt)}
                             </span>
+                            <span className="post-reading-time">
+                                <i className="fas fa-clock"></i>
+                                {t('newsDetail.readingTime')}
+                            </span>
                         </div>
                     </header>
 
@@ -140,11 +173,23 @@ export const NewsDetail = () => {
                         </div>
                     )}
 
+                    {/* Table of Contents */}
+                    <div className="detail-toc">
+                        <h4><i className="fas fa-list-ul"></i> {t('newsDetail.toc')}</h4>
+                        <ul>
+                            {detailedContent.sections.map((section, index) => (
+                                <li key={index}>
+                                    <a href={`#section-${index}`}>{section.title}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
                     <div className="detail-content">
                         <p className="intro-text">{detailedContent.intro}</p>
 
                         {detailedContent.sections.map((section, index) => (
-                            <div key={index} className="content-section">
+                            <div key={index} className="content-section" id={`section-${index}`}>
                                 <h2 className="section-title">{section.title}</h2>
                                 <p className="section-text">{section.content}</p>
                                 {section.image && (
@@ -158,12 +203,12 @@ export const NewsDetail = () => {
                         <div className="article-footer">
                             <div className="tags">
                                 <i className="fas fa-tags"></i>
-                                <span className="tag">Tin tức</span>
-                                <span className="tag">Cập nhật</span>
-                                <span className="tag">Xu hướng</span>
+                                <span className="tag">{t('newsDetail.tagNews')}</span>
+                                <span className="tag">{t('newsDetail.tagUpdate')}</span>
+                                <span className="tag">{t('newsDetail.tagTrend')}</span>
                             </div>
                             <div className="share-section">
-                                <p>Chia sẻ bài viết:</p>
+                                <p>{t('newsDetail.shareArticle')}</p>
                                 <div className="share-buttons">
                                     <button className="share-btn facebook">
                                         <i className="fab fa-facebook-f"></i>

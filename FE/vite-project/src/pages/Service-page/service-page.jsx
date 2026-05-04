@@ -1,17 +1,46 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import './service-page.css';
 import API_URL from '../../config/api.js';
+import { useLang } from '../../context/LanguageContext.jsx';
 
 export const ServicePage = () => {
+    const { t } = useLang();
+    const faqData = [
+        { q: t('service.faq1Q'), a: t('service.faq1A') },
+        { q: t('service.faq2Q'), a: t('service.faq2A') },
+        { q: t('service.faq3Q'), a: t('service.faq3A') },
+        { q: t('service.faq4Q'), a: t('service.faq4A') },
+    ];
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [openFaq, setOpenFaq] = useState(null);
     const itemsPerPage = 6;
+    const observerRef = useRef(null);
 
     useEffect(() => {
         fetchServices();
     }, []);
+
+    useEffect(() => {
+        observerRef.current = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("revealed");
+                        observerRef.current.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+        );
+        document.querySelectorAll("[data-reveal]").forEach((el) => {
+            observerRef.current.observe(el);
+        });
+        return () => observerRef.current?.disconnect();
+    }, [loading]);
 
     const getPaginatedData = (data) => {
         const indexOfLastItem = currentPage * itemsPerPage;
@@ -39,7 +68,7 @@ export const ServicePage = () => {
                     disabled={currentPage === 1}
                     className="pagination-btn"
                 >
-                    ◀ Trước
+                    {t('service.prev')}
                 </button>
                 {pages.map(page => (
                     <button
@@ -55,7 +84,7 @@ export const ServicePage = () => {
                     disabled={currentPage === totalPages}
                     className="pagination-btn"
                 >
-                    Sau ▶
+                    {t('service.next')}
                 </button>
             </div>
         );
@@ -65,14 +94,11 @@ export const ServicePage = () => {
         setLoading(true);
         setError(null);
         try {
-            console.log('Fetching services from API...');
             const response = await fetch(`${API_URL}/api/services`);
-            console.log('Response status:', response.status);
             if (!response.ok) {
                 throw new Error('Không thể tải dữ liệu dịch vụ');
             }
             const data = await response.json();
-            console.log('Services data:', data);
             setServices(data);
         } catch (err) {
             console.error('Error fetching services:', err);
@@ -85,15 +111,23 @@ export const ServicePage = () => {
     return (
         <div className="service-page">
             <div className="service-hero">
-                <h1>Dịch vụ của chúng tôi</h1>
-                <p>Khám phá các dịch vụ chuyên nghiệp và chất lượng cao</p>
+                <span className="svc-hero-badge"><i className="fas fa-briefcase"></i> {t('service.heroBadge')}</span>
+                <h1>{t('service.heroTitle')}</h1>
+                <p>{t('service.heroDesc')}</p>
+                <div className="svc-hero-stats">
+                    <div className="svc-hero-stat"><strong>320+</strong><span>{t('service.statPackages')}</span></div>
+                    <div className="svc-hero-stat-divider"></div>
+                    <div className="svc-hero-stat"><strong>85%</strong><span>{t('service.statWin')}</span></div>
+                    <div className="svc-hero-stat-divider"></div>
+                    <div className="svc-hero-stat"><strong>12+</strong><span>{t('service.statYears')}</span></div>
+                </div>
             </div>
 
             <div className="service-container">
                 {loading && (
                     <div className="service-loading">
                         <div className="spinner"></div>
-                        <p>Đang tải dịch vụ...</p>
+                        <p>{t('service.loading')}</p>
                     </div>
                 )}
 
@@ -107,15 +141,16 @@ export const ServicePage = () => {
                 {!loading && !error && services.length === 0 && (
                     <div className="service-empty">
                         <i className="fa-solid fa-box-open"></i>
-                        <p>Hiện chưa có dịch vụ nào</p>
+                        <p>{t('service.noServices')}</p>
                     </div>
                 )}
 
                 {!loading && !error && services.length > 0 && (
                     <>
-                        <div className="services-grid">
-                            {getPaginatedData(services).map((service) => (
-                                <div key={service._id} className="service-card">
+                        <div className="services-grid" data-reveal>
+                            {getPaginatedData(services).map((service, idx) => (
+                                <div key={service._id} className="service-card" style={{'--card-i': idx}}>
+                                    <div className="service-card-number">{String(idx + 1 + (currentPage - 1) * itemsPerPage).padStart(2, '0')}</div>
                                     <div className="service-icon-wrapper">
                                         <i className={service.icon}></i>
                                     </div>
@@ -141,20 +176,21 @@ export const ServicePage = () => {
 
             {/* Quy trình làm việc */}
             <div className="process-section">
-                <div className="process-header">
-                    <h2>Quy trình làm việc</h2>
+                <div className="process-header" data-reveal>
+                    <span className="process-label"><i className="fas fa-route"></i> {t('service.processBadge')}</span>
+                    <h2>{t('service.processTitle')}</h2>
                     <p>Quy trình chuyên nghiệp, minh bạch và hiệu quả</p>
                 </div>
-                <div className="process-timeline">
+                <div className="process-timeline" data-reveal>
+                    <div className="process-line"></div>
                     <div className="process-step">
                         <div className="step-number">01</div>
                         <div className="step-icon">
                             <i className="fa-solid fa-file-contract"></i>
                         </div>
-                        <h3 className="step-title">Tiếp nhận yêu cầu</h3>
+                        <h3 className="step-title">{t('service.step1Title')}</h3>
                         <p className="step-description">
-                            Lắng nghe và ghi nhận đầy đủ yêu cầu của khách hàng. 
-                            Tư vấn giải pháp phù hợp nhất với nhu cầu và ngân sách.
+                            {t('service.step1Desc')}
                         </p>
                     </div>
 
@@ -163,10 +199,9 @@ export const ServicePage = () => {
                         <div className="step-icon">
                             <i className="fa-solid fa-clipboard-check"></i>
                         </div>
-                        <h3 className="step-title">Đánh giá và báo giá</h3>
+                        <h3 className="step-title">{t('service.step2Title')}</h3>
                         <p className="step-description">
-                            Phân tích chi tiết dự án, đánh giá khối lượng công việc.
-                            Đưa ra báo giá minh bạch và thời gian thực hiện cụ thể.
+                            {t('service.step2Desc')}
                         </p>
                     </div>
 
@@ -175,10 +210,9 @@ export const ServicePage = () => {
                         <div className="step-icon">
                             <i className="fa-solid fa-gear"></i>
                         </div>
-                        <h3 className="step-title">Thực hiện dự án</h3>
+                        <h3 className="step-title">{t('service.step3Title')}</h3>
                         <p className="step-description">
-                            Triển khai dự án theo đúng tiến độ đã cam kết.
-                            Thường xuyên cập nhật tiến độ và điều chỉnh khi cần thiết.
+                            {t('service.step3Desc')}
                         </p>
                     </div>
 
@@ -187,11 +221,46 @@ export const ServicePage = () => {
                         <div className="step-icon">
                             <i className="fa-solid fa-handshake"></i>
                         </div>
-                        <h3 className="step-title">Bàn giao và hỗ trợ</h3>
+                        <h3 className="step-title">{t('service.step4Title')}</h3>
                         <p className="step-description">
-                            Bàn giao sản phẩm hoàn chỉnh và hướng dẫn sử dụng chi tiết.
-                            Hỗ trợ kỹ thuật và bảo hành theo cam kết.
+                            {t('service.step4Desc')}
                         </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* FAQ Section */}
+            <div className="svc-faq-section">
+                <div className="svc-faq-inner">
+                    <div className="svc-faq-header" data-reveal>
+                        <span className="process-label"><i className="fas fa-question-circle"></i> FAQ</span>
+                        <h2>{t('service.faqTitle')}</h2>
+                        <p>{t('service.faqSubtitle')}</p>
+                    </div>
+                    <div className="svc-faq-list" data-reveal>
+                        {faqData.map((item, i) => (
+                            <div key={i} className={`svc-faq-item${openFaq === i ? ' open' : ''}`}>
+                                <button className="svc-faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                                    <span>{item.q}</span>
+                                    <i className={`fas fa-chevron-down svc-faq-chevron`}></i>
+                                </button>
+                                <div className="svc-faq-a">
+                                    <p>{item.a}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* CTA */}
+            <div className="svc-cta">
+                <div className="svc-cta-inner" data-reveal>
+                    <h3>{t('service.ctaTitle')}</h3>
+                    <p>{t('service.ctaDesc')}</p>
+                    <div className="svc-cta-actions">
+                        <Link to="/contact"><button className="cta-btn"><i className="fas fa-phone"></i> {t('service.freeConsult')}</button></Link>
+                        <Link to="/about"><button className="cta-btn cta-btn--outline cta-btn--light">{t('service.viewServices')} <i className="fas fa-arrow-right"></i></button></Link>
                     </div>
                 </div>
             </div>
